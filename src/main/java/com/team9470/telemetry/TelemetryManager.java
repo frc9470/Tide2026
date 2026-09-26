@@ -1,6 +1,7 @@
 package com.team9470.telemetry;
 
 import com.team9470.telemetry.structs.DriveStatusSnapshot;
+import com.team9470.telemetry.structs.PracticeTimerSnapshot;
 import com.team9470.telemetry.structs.VisionCameraSnapshot;
 import com.team9470.telemetry.structs.VisionSnapshot;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,10 +19,11 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.networktables.StringPublisher;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Drive and vision telemetry shared by the robot. Add mechanism topics as they are built. */
+/** Drive, vision, and match timing telemetry. Add mechanism topics as they are built. */
 public final class TelemetryManager {
   public static final int VALIDATION_OK = 0;
   public static final int VALIDATION_OUTSIDE_FIELD = 1;
@@ -63,6 +65,10 @@ public final class TelemetryManager {
   private final DoublePublisher centerlineTouch = path.getDoubleTopic("CenterlineTouchSec").publish();
   private final StructPublisher<VisionSnapshot> visionStatus = vision.getStructTopic("Status", VisionSnapshot.struct).publish();
   private final IntegerPublisher visionValidation = vision.getIntegerTopic("ValidationStatus").publish();
+  private final NetworkTable timing = root.getSubTable("PracticeTimer");
+  private final StructPublisher<PracticeTimerSnapshot> timingStatus = timing.getStructTopic("Status", PracticeTimerSnapshot.struct).publish();
+  private final StringPublisher timingPhase = timing.getStringTopic("Phase").publish();
+  private final StringPublisher timingZone = timing.getStringTopic("Zone").publish();
   private final Map<String, StructPublisher<VisionCameraSnapshot>> cameraStatus = new HashMap<>();
   private final Map<String, StructArrayPublisher<Pose3d>> cameraTags = new HashMap<>();
   private final Map<String, StructPublisher<Pose3d>> cameraPose = new HashMap<>();
@@ -138,6 +144,12 @@ public final class TelemetryManager {
     visionValidation.set(code);
   }
   public int getVisionValidationStatusCode() { return visionValidationStatusCode; }
+
+  public void publishPracticeTimerState(PracticeTimerSnapshot snapshot, String phase, String zone) {
+    timingStatus.set(snapshot);
+    timingPhase.set(phase);
+    timingZone.set(zone);
+  }
 
   public void publishVisionCameraState(String name, VisionCameraSnapshot snapshot) {
     cameraStatus.computeIfAbsent(name,

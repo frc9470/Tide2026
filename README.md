@@ -6,6 +6,10 @@ PhotonVision pose estimation, field constants, telemetry, and shared utilities. 
 shooter, hopper, intake, superstructure, controller bindings, and autonomous paths were
 removed because they describe a different robot.
 
+The 2026 practice match timer and scoring-window state are retained. They publish
+telemetry and are available to future commands through `MatchTimingService`; no
+mechanism behavior is tied to them yet.
+
 ## Bring-up
 
 1. Check `TunerConstants.java` against the clone's actual CAN IDs, encoder offsets,
