@@ -4,12 +4,14 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-/**
- * Constants for the intake subsystem.
- */
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
+
 public final class TurretConstants {
     private TurretConstants() {
     }
+    public static final Angle upperLimit = Units.Rotations.of(0);
+    public static final Angle lowerLimit = Units.Rotations.of(1);
     public static final double kP = 0;
     public static final double kD = 0;
     public static final double CRUISE_VELOCITY = 2;

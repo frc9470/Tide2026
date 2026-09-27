@@ -8,6 +8,7 @@ import com.team9470.FieldConstants;
 import com.team9470.Ports;
 import com.team9470.subsystems.swerve.Swerve;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,6 +27,8 @@ public class Turret extends SubsystemBase {
     private double targetVelocity = 0;
     private Angle targetAngle = Units.Degrees.of(0);
     private Swerve poseSlave;
+    public boolean targetHub = true;
+    
     public Turret(Swerve swerve) {
         poseSlave = swerve;
         turretMotor = TalonFXFactory.createDefaultTalon(Ports.TURRET_MOTOR); 
@@ -34,10 +37,11 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
-        calculateTarget();
+        calculateTargetMain();
+        targetAngle = Units.Rotations.of(MathUtil.clamp(targetAngle.in(Rotations), TurretConstants.lowerLimit.in(Rotations), TurretConstants.upperLimit.in(Rotations)));
         targetVelocity = controller.calculate(getAngle().in(Rotations), targetAngle.in(Rotations));
         turretMotor.setControl(motionMagic.withVelocity(targetVelocity));
-        //no logging haha
+        //im not paid enough to do no telemetry
     }
     public Angle getAngle() {
         return turretMotor.getPosition().getValue();
@@ -47,10 +51,24 @@ public class Turret extends SubsystemBase {
         targetAngle = angle;
     }
 
-    private void calculateTarget() {
+    private void calculateTargetMain(){
+        if(targetHub) calculateTargetHub();
+        else calculateTargetPass();
+    
+    }
+    private void calculateTargetHub() {
         Pose2d robotPose = poseSlave.getPose();
         Translation2d offset = new Pose2d(new Translation2d(FieldConstants.Hub.topCenterPoint.getX(), FieldConstants.Hub.topCenterPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
         setTargetAngle(offset.getAngle().getMeasure());
+    }
+    private void calculateTargetPass() {
+        
+        Pose2d robotPose = poseSlave.getPose();
+        
+        Translation2d leftPass = new Pose2d(new Translation2d(FieldConstants.Depot.depotCenter.getX(), FieldConstants.Depot.depotCenter.getY()), new Rotation2d()).minus(robotPose).getTranslation();
+        Translation2d rightPass = new Pose2d(new Translation2d(FieldConstants.Outpost.centerPoint.getX(), FieldConstants.Outpost.centerPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
+        
+        setTargetAngle((leftPass.getSquaredNorm() < rightPass.getSquaredNorm() ? leftPass : rightPass).getAngle().getMeasure());
     }
 
 }
