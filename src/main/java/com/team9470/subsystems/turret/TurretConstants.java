@@ -18,7 +18,7 @@ public final class TurretConstants {
     public static final double ACCELERATION = 15; 
     public static final double JERK = 0; 
 
-    public static final double GEAR_RATIO = 0;
+    public static final double GEAR_RATIO = 8;
 
     public static TalonFXConfiguration getTurretConfig() {
         TalonFXConfiguration config = new TalonFXConfiguration();
