@@ -194,3 +194,6 @@ analysis/data/raw/*
 !analysis/data/raw/.gitkeep
 analysis/results/*
 !analysis/results/.gitkeep
+
+.claude
+CLAUDE.md
