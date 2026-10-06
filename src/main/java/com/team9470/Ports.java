@@ -17,4 +17,6 @@ public final class Ports {
   public static final CanDeviceId KICKER_ROLLER = new CanDeviceId(0);
 
   public static final CanDeviceId DYE_MOTOR = new CanDeviceId(0);
+  public static final CanDeviceId DYE_LEFT_ROLLER = new CanDeviceId(0);
+  public static final CanDeviceId DYE_RIGHT_ROLLER = new CanDeviceId(0);
 }
