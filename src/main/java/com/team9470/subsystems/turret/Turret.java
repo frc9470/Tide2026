@@ -1,6 +1,7 @@
 package com.team9470.subsystems.turret;
 
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.team254.lib.drivers.TalonFXFactory;
 import com.team254.lib.drivers.TalonUtil;
@@ -13,8 +14,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static edu.wpi.first.units.Units.*;
@@ -22,9 +25,9 @@ public class Turret extends SubsystemBase {
 
     private final TalonFX turretMotor;
 
-    private final MotionMagicVelocityVoltage motionMagic = new MotionMagicVelocityVoltage(0);
-    private PIDController controller = new PIDController(TurretConstants.kP, 0, TurretConstants.kD);
-    private double targetVelocity = 0;
+    private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
+    //private PIDController controller = new PIDController(TurretConstants.kP, 0, TurretConstants.kD);
+    //private double targetVelocity = 0;
     private Angle targetAngle = Units.Degrees.of(0);
     private Swerve poseSlave;
     public boolean targetHub = true;
@@ -39,9 +42,11 @@ public class Turret extends SubsystemBase {
     public void periodic() {
         calculateTargetMain();
         targetAngle = Units.Rotations.of(MathUtil.clamp(targetAngle.in(Rotations), TurretConstants.lowerLimit.in(Rotations), TurretConstants.upperLimit.in(Rotations)));
-        targetVelocity = controller.calculate(getAngle().in(Rotations), targetAngle.in(Rotations));
-        turretMotor.setControl(motionMagic.withVelocity(targetVelocity));
+        //targetVelocity = controller.calculate(getAngle().in(Rotations), targetAngle.in(Rotations));
+        turretMotor.setControl(motionMagic.withPosition(targetAngle));
         //im not paid enough to do no telemetry
+        SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
+        SmartDashboard.putNumber("Turret/Error", targetAngle.in(Degrees)-getAngle().in(Degrees));
     }
     public Angle getAngle() {
         return turretMotor.getPosition().getValue();
