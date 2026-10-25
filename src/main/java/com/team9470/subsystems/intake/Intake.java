@@ -3,6 +3,8 @@ package com.team9470.subsystems.intake;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.PositionVoltage;
+
 import com.team254.lib.drivers.TalonFXFactory;
 import com.team254.lib.drivers.TalonUtil;
 import com.team9470.Ports;
@@ -18,6 +20,8 @@ public class Intake extends SubsystemBase{
     private final TalonFX rightIntakeMotor;
     private final TalonFX leftIntakeMotor;
     private final TalonFX kickerMotor;
+
+    private final PositionVoltage intakePositionRequest = new PositionVoltage(0);
 
     public boolean deployed = false;
     public boolean agitating = false;

@@ -40,7 +40,7 @@ public class IntakeConstants {
         kRightRollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         kRightRollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        kRightRollerConfig.CurrentLimits.StatorCurrentLimit(kRollerStatorCurrentLimit);
+        //kRightRollerConfig.CurrentLimits.StatorCurrentLimit(1 /*kRollerStatorCurrentLimit*/);
 
 
         //Left Roller
