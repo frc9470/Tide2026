@@ -7,7 +7,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 public final class DyeConstants {
     private DyeConstants() {
     }
-
+    public static final double COAX_GEAR = (30.0 / 24) * (30.0 / 40);
     public static final double FEED_VELOCITY_RPS = 0;
     public static final double REVERSE_VELOCITY_RPS = 0;
     public static final double VELOCITY_TOLERANCE_RPS = 1;

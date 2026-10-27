@@ -38,11 +38,6 @@ public class Dye extends SubsystemBase {
 
     @Override
     public void periodic() {
-
-        //set roller velocity
-        
-        
-
         SmartDashboard.putNumber("DyeRotor/VelocityRps", getVelocityRps());
         SmartDashboard.putNumber("DyeRotor/TargetRps", targetVelocityRps);
         SmartDashboard.putNumber("DyeRotor/StatorCurrentAmps", dye.getStatorCurrent().getValueAsDouble());
@@ -53,8 +48,14 @@ public class Dye extends SubsystemBase {
         SmartDashboard.putNumber("DyeRollers/RightStatorCurrentAmps",
                 rightRoller.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putBoolean("DyeRollers/AtSpeed", isRollersAtSpeed());
-
+        SmartDashboard.putNumber("DyeRollers/CoaxMotorRPS", coaxMotorSetpointRps(getRollerVelocityRps(), rollerTargetRps == DyeConstants.ROLLER_FEED_VELOCITY_RPS));
     }
+
+    public double coaxMotorSetpointRps(double rotorRps, boolean feeding) {
+        double coaxRps = rotorRps * (feeding ? 20.0 : 1.0);
+        return coaxRps / DyeConstants.COAX_GEAR; 
+    }
+
 
     public double getVelocityRps() {
         return dye.getVelocity().getValueAsDouble();
