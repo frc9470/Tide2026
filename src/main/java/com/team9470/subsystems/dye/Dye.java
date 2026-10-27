@@ -48,7 +48,6 @@ public class Dye extends SubsystemBase {
         SmartDashboard.putNumber("DyeRollers/RightStatorCurrentAmps",
                 rightRoller.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putBoolean("DyeRollers/AtSpeed", isRollersAtSpeed());
-        SmartDashboard.putNumber("DyeRollers/CoaxMotorRPS", coaxMotorSetpointRps(getRollerVelocityRps(), rollerTargetRps == DyeConstants.ROLLER_FEED_VELOCITY_RPS));
     }
 
     public double coaxMotorSetpointRps(double rotorRps, boolean feeding) {
@@ -90,12 +89,12 @@ public class Dye extends SubsystemBase {
     }
 
     public Command feed() {
-        return runEnd(() -> setVelocity(DyeConstants.FEED_VELOCITY_RPS, DyeConstants.ROLLER_FEED_VELOCITY_RPS),
+        return runEnd(() -> setVelocity(DyeConstants.FEED_VELOCITY_RPS, coaxMotorSetpointRps(DyeConstants.FEED_VELOCITY_RPS, true)),
                 this::setNeutral);
     }
 
     public Command reverse() {
-        return runEnd(() -> setVelocity(DyeConstants.REVERSE_VELOCITY_RPS, DyeConstants.ROLLER_REVERSE_VELOCITY_RPS),
+        return runEnd(() -> setVelocity(DyeConstants.REVERSE_VELOCITY_RPS, coaxMotorSetpointRps(DyeConstants.REVERSE_VELOCITY_RPS, false)),
                 this::setNeutral);
     }
 
