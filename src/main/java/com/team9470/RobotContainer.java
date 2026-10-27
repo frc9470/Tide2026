@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import com.team9470.subsystems.turret.Turret;
+import com.team9470.subsystems.dye.Dye;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
@@ -22,6 +23,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
   private final Swerve swerve;
   private Turret turret;
+  private Dye dye;
 
   public RobotContainer() {
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
@@ -37,6 +39,8 @@ public class RobotContainer {
     
     swerve = Swerve.getInstance();
     turret = new Turret(swerve);
+    dye = new Dye();
+
     if (HardwareConfig.VISION_VERIFIED) {
       Vision.getInstance().setVisionDisabled(false);
     }
@@ -59,6 +63,11 @@ public class RobotContainer {
     driver.x().whileTrue(swerve.applyRequest(() -> xLock));
     driver.back().and(DriverStation::isTestEnabled)
         .whileTrue(new WheelRadiusCharacterization(swerve));
+
+    //dye
+    driver.x().whileTrue(dye.feed());
+    
+    
   }
 
   public Command getAutonomousCommand() {
