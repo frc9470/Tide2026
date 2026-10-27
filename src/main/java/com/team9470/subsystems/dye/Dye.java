@@ -50,8 +50,9 @@ public class Dye extends SubsystemBase {
         SmartDashboard.putBoolean("DyeRollers/AtSpeed", isRollersAtSpeed());
     }
 
-    public double coaxMotorSetpointRps(double rotorRps, boolean feeding) {
-        double coaxRps = rotorRps * (feeding ? 20.0 : 1.0);
+    public double coaxMotorSetpointRps(double rotorMotorRps, boolean feeding) {
+        double rotorRps = rotorMotorRps / DyeConstants.ROTOR_RATIO;
+        double coaxRps = rotorRps * (feeding ? DyeConstants.FEED_MULTI : 1.0);
         return coaxRps / DyeConstants.COAX_GEAR; 
     }
 
