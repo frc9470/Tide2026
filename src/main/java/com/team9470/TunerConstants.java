@@ -105,7 +105,7 @@ public class TunerConstants {
         private static final boolean kInvertLeftSide = false;
         private static final boolean kInvertRightSide = true;
 
-        private static final int kPigeonId = 0;
+        private static final int kPigeonId = 9;
         public static final SwerveDrivetrainConstants DrivetrainConstants = new SwerveDrivetrainConstants()
                         .withCANBusName(kCANBus.getName())
                         .withPigeon2Id(kPigeonId)
