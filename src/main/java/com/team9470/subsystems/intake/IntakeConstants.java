@@ -17,14 +17,14 @@ public class IntakeConstants {
 
 
     //fix
-    public static final double kIntakeStatorCurrentLimit = 0.0;
-    public static final double kIntakeSupplyCurrentLimit = 0.0;
+    public static final double kIntakeStatorCurrentLimit = 999.0;
+    public static final double kIntakeSupplyCurrentLimit = 999.0;
 
-    public static final double kRollerStatorCurrentLimit = 0.0;
-    public static final double kRollerSupplyCurrentLimit = 0.0;
+    public static final double kRollerStatorCurrentLimit = 999.0;
+    public static final double kRollerSupplyCurrentLimit = 999.0;
 
-    public static final double kKickerStatorCurrentLimit = 0.0;
-    public static final double kKickerSupplyCurrentLimit = 0.0;
+    public static final double kKickerStatorCurrentLimit = 999.0;
+    public static final double kKickerSupplyCurrentLimit = 999.0;
 
 
     public static final double ROLLER_SPEED = 12.0;
