@@ -22,8 +22,8 @@ public class RobotContainer {
       new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
   private final Swerve swerve;
-  private Turret turret;
-  private Dye dye;
+  //private Turret turret;
+  //private Dye dye;
 
   public RobotContainer() {
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
@@ -38,8 +38,8 @@ public class RobotContainer {
     }
     
     swerve = Swerve.getInstance();
-    turret = new Turret(swerve);
-    dye = new Dye();
+    //turret = new Turret(swerve);
+    //dye = new Dye();
 
     if (HardwareConfig.VISION_VERIFIED) {
       Vision.getInstance().setVisionDisabled(false);
@@ -65,7 +65,7 @@ public class RobotContainer {
         .whileTrue(new WheelRadiusCharacterization(swerve));
 
     //dye
-    driver.x().whileTrue(dye.feed());
+    //driver.x().whileTrue(dye.feed());
     
     
   }
