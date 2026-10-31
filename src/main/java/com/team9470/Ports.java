@@ -19,4 +19,12 @@ public final class Ports {
   public static final CanDeviceId DYE_MOTOR = new CanDeviceId(0);
   public static final CanDeviceId DYE_LEFT_ROLLER = new CanDeviceId(0);
   public static final CanDeviceId DYE_RIGHT_ROLLER = new CanDeviceId(0);
+
+  public static final CanDeviceId SHOOTER_MOTOR1 = new CanDeviceId(0);
+  public static final CanDeviceId SHOOTER_MOTOR2 = new CanDeviceId(0);
+  public static final CanDeviceId SHOOTER_MOTOR3 = new CanDeviceId(0);
+  public static final CanDeviceId SHOOTER_MOTOR4 = new CanDeviceId(0);
+
+  public static final CanDeviceId HOOD_MOTOR = new CanDeviceId(0);
+
 }
