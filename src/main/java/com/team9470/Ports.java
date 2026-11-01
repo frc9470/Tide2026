@@ -16,9 +16,9 @@ public final class Ports {
   public static final CanDeviceId LEFT_DEPLOY_MOTOR = new CanDeviceId(62);
   public static final CanDeviceId KICKER_ROLLER = new CanDeviceId(58);
 
-  public static final CanDeviceId DYE_MOTOR = new CanDeviceId(0);
-  public static final CanDeviceId DYE_LEFT_ROLLER = new CanDeviceId(0);
-  public static final CanDeviceId DYE_RIGHT_ROLLER = new CanDeviceId(0);
+  public static final CanDeviceId DYE_MOTOR = new CanDeviceId(51);
+  public static final CanDeviceId DYE_LEFT_ROLLER = new CanDeviceId(56);
+  public static final CanDeviceId DYE_RIGHT_ROLLER = new CanDeviceId(57);
 
   public static final CanDeviceId SHOOTER_MOTOR1 = new CanDeviceId(0);
   public static final CanDeviceId SHOOTER_MOTOR2 = new CanDeviceId(0);
