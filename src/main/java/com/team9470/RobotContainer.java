@@ -25,7 +25,7 @@ public class RobotContainer {
   private final Swerve swerve;
   private Intake intake;
   //privae Turret turret;
-  //private Dye dye;
+  private Dye dye;
 
   public RobotContainer() {
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
@@ -68,7 +68,11 @@ public class RobotContainer {
 
       
     //dye
-    //driver.x().whileTrue(dye.feed());
+    if(driver.rightTrigger(0.3).getAsBoolean()){
+      dye.feed();
+    }else{
+      dye.reverse();
+    }
     
     //intake
     if(driver.leftTrigger(0.3).getAsBoolean()){

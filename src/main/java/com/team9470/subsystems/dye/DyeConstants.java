@@ -40,7 +40,7 @@ public final class DyeConstants {
         config.Slot0.kS = kS;
         config.Slot0.kV = kV;
         config.Slot0.kP = kP;
-        config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
+        config.Feedback.SensorToMechanismRatio = ROTOR_RATIO;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -54,7 +54,7 @@ public final class DyeConstants {
         config.Slot0.kS = ROLLER_kS;
         config.Slot0.kV = ROLLER_kV;
         config.Slot0.kP = ROLLER_kP;
-        config.Feedback.SensorToMechanismRatio = ROLLER_GEAR_RATIO;
+        config.Feedback.SensorToMechanismRatio = COAX_GEAR;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
