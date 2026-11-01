@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import com.team9470.subsystems.turret.Turret;
 import com.team9470.subsystems.dye.Dye;
+import com.team9470.subsystems.intake.Intake;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
@@ -22,7 +23,8 @@ public class RobotContainer {
       new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
   private final Swerve swerve;
-  //private Turret turret;
+  private Intake intake;
+  //privae Turret turret;
   //private Dye dye;
 
   public RobotContainer() {
@@ -36,7 +38,7 @@ public class RobotContainer {
       swerve = null;
       return;
     }
-    
+    intake = new Intake();
     swerve = Swerve.getInstance();
     //turret = new Turret(swerve);
     //dye = new Dye();
@@ -64,8 +66,16 @@ public class RobotContainer {
     driver.back().and(DriverStation::isTestEnabled)
         .whileTrue(new WheelRadiusCharacterization(swerve));
 
+      
     //dye
     //driver.x().whileTrue(dye.feed());
+    
+    //intake
+    if(driver.leftTrigger(0.3).getAsBoolean()){
+      intake.deploy();
+    }else{
+      intake.stow();
+    }
     
     
   }

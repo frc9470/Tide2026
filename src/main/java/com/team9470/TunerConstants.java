@@ -31,7 +31,7 @@ public class TunerConstants {
         public static final CANBus kCANBus = new CANBus("", "./logs/example.hoot");
         // Theoretical free speed (m/s) at 12 V applied output;
         // This needs to be tuned to your individual robot
-        public static final LinearVelocity kSpeedAt12Volts = FeetPerSecond.of(10 );
+        public static final LinearVelocity kSpeedAt12Volts = FeetPerSecond.of(14.4 );
         // The steer motor uses any SwerveModule.SteerRequestyTpe control request with
         // the
         // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
