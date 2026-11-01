@@ -10,11 +10,11 @@ public final class Ports {
   // random number for ports rn cuz idfk what their in
   public static final CanDeviceId TURRET_MOTOR = new CanDeviceId(0);
 
-  public static final CanDeviceId RIGHT_ROLLER_MOTOR = new CanDeviceId(0);
-  public static final CanDeviceId LEFT_ROLLER_MOTOR = new CanDeviceId(0);
-  public static final CanDeviceId RIGHT_DEPLOY_MOTOR = new CanDeviceId(0);
-  public static final CanDeviceId LEFT_DEPLOY_MOTOR = new CanDeviceId(0);
-  public static final CanDeviceId KICKER_ROLLER = new CanDeviceId(0);
+  public static final CanDeviceId RIGHT_ROLLER_MOTOR = new CanDeviceId(5);
+  public static final CanDeviceId LEFT_ROLLER_MOTOR = new CanDeviceId(61);
+  public static final CanDeviceId RIGHT_DEPLOY_MOTOR = new CanDeviceId(59);
+  public static final CanDeviceId LEFT_DEPLOY_MOTOR = new CanDeviceId(62);
+  public static final CanDeviceId KICKER_ROLLER = new CanDeviceId(58);
 
   public static final CanDeviceId DYE_MOTOR = new CanDeviceId(0);
   public static final CanDeviceId DYE_LEFT_ROLLER = new CanDeviceId(0);

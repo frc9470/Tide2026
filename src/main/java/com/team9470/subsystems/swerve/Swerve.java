@@ -342,7 +342,8 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     /**
-     * Drive with actual field-relative ChassisSpeeds (blue-origin coordinate system).
+     * Drive with actual field-relative ChassisSpeeds (blue-origin coordinate
+     * system).
      * Unlike setFieldSpeeds, this does NOT apply operator perspective.
      * Used for COR-shifted SOTM driving.
      */
