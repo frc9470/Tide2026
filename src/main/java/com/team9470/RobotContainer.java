@@ -41,7 +41,7 @@ public class RobotContainer {
     intake = new Intake();
     swerve = Swerve.getInstance();
     //turret = new Turret(swerve);
-    //dye = new Dye();
+    dye = new Dye();
 
     if (HardwareConfig.VISION_VERIFIED) {
       Vision.getInstance().setVisionDisabled(false);

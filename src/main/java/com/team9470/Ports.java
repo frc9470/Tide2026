@@ -6,19 +6,19 @@ import com.team254.lib.drivers.CanDeviceId;
 public final class Ports {
   private Ports() {
   }
-
+  public static final String CANIVORE = "canivore";
   // random number for ports rn cuz idfk what their in
   public static final CanDeviceId TURRET_MOTOR = new CanDeviceId(0);
 
-  public static final CanDeviceId RIGHT_ROLLER_MOTOR = new CanDeviceId(5);
-  public static final CanDeviceId LEFT_ROLLER_MOTOR = new CanDeviceId(61);
-  public static final CanDeviceId RIGHT_DEPLOY_MOTOR = new CanDeviceId(59);
-  public static final CanDeviceId LEFT_DEPLOY_MOTOR = new CanDeviceId(62);
-  public static final CanDeviceId KICKER_ROLLER = new CanDeviceId(58);
+  public static final CanDeviceId RIGHT_ROLLER_MOTOR = new CanDeviceId(61,CANIVORE);
+  public static final CanDeviceId LEFT_ROLLER_MOTOR = new CanDeviceId(36, CANIVORE);
+  public static final CanDeviceId RIGHT_DEPLOY_MOTOR = new CanDeviceId(59, CANIVORE);
+  public static final CanDeviceId LEFT_DEPLOY_MOTOR = new CanDeviceId(54, CANIVORE);
+  public static final CanDeviceId KICKER_ROLLER = new CanDeviceId(58,CANIVORE);
 
-  public static final CanDeviceId DYE_MOTOR = new CanDeviceId(51);
-  public static final CanDeviceId DYE_LEFT_ROLLER = new CanDeviceId(56);
-  public static final CanDeviceId DYE_RIGHT_ROLLER = new CanDeviceId(57);
+  public static final CanDeviceId DYE_MOTOR = new CanDeviceId(51,CANIVORE);
+  public static final CanDeviceId DYE_LEFT_ROLLER = new CanDeviceId(56,CANIVORE);
+  public static final CanDeviceId DYE_RIGHT_ROLLER = new CanDeviceId(57, CANIVORE);
 
   public static final CanDeviceId SHOOTER_MOTOR1 = new CanDeviceId(0);
   public static final CanDeviceId SHOOTER_MOTOR2 = new CanDeviceId(0);

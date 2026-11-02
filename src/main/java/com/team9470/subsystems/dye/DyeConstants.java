@@ -25,7 +25,7 @@ public final class DyeConstants {
 
     // Rollers: left is the leader, right follows. Both gears drive the same belt.
     // Set true if the right motor must spin opposite the left (mirrored mounting).
-    public static final boolean RIGHT_ROLLER_OPPOSES_LEFT = true;
+    public static final boolean RIGHT_ROLLER_OPPOSES_LEFT = false;
     public static final double ROLLER_FEED_VELOCITY_RPS = 0;
     public static final double ROLLER_REVERSE_VELOCITY_RPS = 0;
     public static final double ROLLER_VELOCITY_TOLERANCE_RPS = 1;
