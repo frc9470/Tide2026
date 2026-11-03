@@ -28,7 +28,7 @@ public class Turret extends SubsystemBase {
     private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
     //private PIDController controller = new PIDController(TurretConstants.kP, 0, TurretConstants.kD);
     //private double targetVelocity = 0;
-    private static Angle targetAngle = Units.Degrees.of(0);
+    public static Angle targetAngle = Units.Degrees.of(0);
     private Swerve poseSlave;
     public boolean targetHub = true;
     
@@ -40,9 +40,8 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
-        calculateTargetMain();
-        targetAngle = Units.Rotations.of(MathUtil.clamp(targetAngle.in(Rotations), TurretConstants.lowerLimit.in(Rotations), TurretConstants.upperLimit.in(Rotations)));
-        //targetVelocity = controller.calculate(getAngle().in(Rotations), targetAngle.in(Rotations));
+        //calculateTargetMain();
+        //targetAngle = Units.Rotations.of(MathUtil.clamp(targetAngle.in(Rotations), TurretConstants.lowerLimit.in(Rotations), TurretConstants.upperLimit.in(Rotations)));
         turretMotor.setControl(motionMagic.withPosition(targetAngle));
         //im not paid enough to do no telemetry
         SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));

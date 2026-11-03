@@ -31,8 +31,8 @@ public class Shooter extends SubsystemBase {
 
     private final MotionMagicVelocityVoltage motionMagic = new MotionMagicVelocityVoltage(0);
     private final MotionMagicVoltage hoodMotionMagic = new MotionMagicVoltage(0);
-    private double targetShooterVelocity = 0;
-    private Angle targetHoodAngle = Units.Degrees.of(0);
+    public static targetShooterVelocity = 0;
+    public static Angle targetHoodAngle = Units.Degrees.of(0);
     private double distance = 0;
     private Swerve poseSlave;
     public boolean targetHub = true;
@@ -57,8 +57,10 @@ public class Shooter extends SubsystemBase {
         calculateTargetMain();
         targetHoodAngle = Units.Rotations.of(MathUtil.clamp(targetHoodAngle.in(Rotations), ShooterConstants.lowerLimit.in(Rotations), ShooterConstants.upperLimit.in(Rotations)));
         //targetVelocity = controller.calculate(getAngle().in(Rotations), targetAngle.in(Rotations));
-        setTargetAngle(calculateHoodAngle());
-        setTargetVelocity(calculateVelocity());
+        setTargetAngle(targetHoodAngle);
+        setTargetVelocity(targetShooterVelocity);
+        // setTargetAngle(calculateHoodAngle());
+        // setTargetVelocity(calculateVelocity());
         shooterMotor1.setControl(motionMagic.withVelocity(targetShooterVelocity));
         shooterMotor2.setControl(motionMagic.withVelocity(targetShooterVelocity));
         shooterMotor3.setControl(motionMagic.withVelocity(targetShooterVelocity));
