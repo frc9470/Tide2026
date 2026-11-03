@@ -53,7 +53,7 @@ public class Intake extends SubsystemBase{
 
         double rollerVolts;
         double kickerVolts;
-        if(deployed){
+        if(deployed || agitating){
             rollerVolts = IntakeConstants.ROLLER_SPEED;
             kickerVolts = IntakeConstants.KICKER_SPEED;
         }
@@ -61,6 +61,13 @@ public class Intake extends SubsystemBase{
             rollerVolts = 0.0;
             kickerVolts = 0.0;
         }
+
+        if(agitating && timer.get() % 1.0 - 0.5 <= 0){
+            stow();
+        }else if(agitating){
+            deploy();
+        }
+        
         rightRollerMotor.setVoltage(rollerVolts);
         kickerMotor.setVoltage(kickerVolts);
     }
@@ -71,12 +78,19 @@ public class Intake extends SubsystemBase{
         leftIntakeMotor.setControl(
             intakePositionRequest.withPosition(IntakeConstants.LEFT_DEPLOYED_POSITION_ROTATIONS));
         deployed = true;
+        agitating = false;
     }
 
     public void stow() {
         rightIntakeMotor.setControl(
             intakePositionRequest.withPosition(IntakeConstants.STOWED_POSITION_ROTATIONS));
         leftIntakeMotor.setControl(intakePositionRequest.withPosition(IntakeConstants.STOWED_POSITION_ROTATIONS));
+    }
+
+    public void agitate(){
+        timer.reset();
+        agitating = true;
+        deployed = false;
     }
 
     public boolean isDeployed() {
