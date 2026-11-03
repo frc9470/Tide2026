@@ -23,12 +23,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static edu.wpi.first.units.Units.*;
 public class Turret extends SubsystemBase {
 
-    private final TalonFX turretMotor;
+    private static TalonFX turretMotor;
 
     private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
     //private PIDController controller = new PIDController(TurretConstants.kP, 0, TurretConstants.kD);
     //private double targetVelocity = 0;
-    private Angle targetAngle = Units.Degrees.of(0);
+    private static Angle targetAngle = Units.Degrees.of(0);
     private Swerve poseSlave;
     public boolean targetHub = true;
     
@@ -48,7 +48,7 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
         SmartDashboard.putNumber("Turret/Error", targetAngle.in(Degrees)-getAngle().in(Degrees));
     }
-    public Angle getAngle() {
+    public static Angle getAngle() {
         return turretMotor.getPosition().getValue();
     }
 

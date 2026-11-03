@@ -96,6 +96,10 @@ public class VisionDevice {
         }
     }
 
+    public void updateOffset(Transform3d transform){
+        photonPoseEstimator.setRobotToCameraTransform(transform);
+    }
+    
     private Optional<EstimatedRobotPose> estimateRobotPose(PhotonPipelineResult result) {
         Optional<EstimatedRobotPose> coprocessorEstimate = photonPoseEstimator.estimateCoprocMultiTagPose(result);
         if (coprocessorEstimate.isPresent()) {

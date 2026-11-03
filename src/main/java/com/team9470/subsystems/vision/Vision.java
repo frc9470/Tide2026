@@ -5,7 +5,11 @@ import com.team9470.Robot;
 import com.team9470.telemetry.TelemetryManager;
 import com.team9470.telemetry.structs.VisionSnapshot;
 import com.team9470.subsystems.swerve.Swerve;
+import com.team9470.subsystems.turret.Turret;
+
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -16,17 +20,18 @@ import java.util.List;
 
 import static com.team9470.subsystems.vision.VisionConstants.FRONT_LEFT_CAMERA_OFFSET;
 import static com.team9470.subsystems.vision.VisionConstants.FRONT_RIGHT_CAMERA_OFFSET;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
 
 public class Vision extends SubsystemBase {
     private static Vision instance;
-
-    private final VisionDevice frontL = new VisionDevice("OV2311-L", FRONT_LEFT_CAMERA_OFFSET);
-    private final VisionDevice frontR = new VisionDevice("OV2311-R", FRONT_RIGHT_CAMERA_OFFSET);
+    private final VisionDevice turret = new VisionDevice("OV2311-Turret", FRONT_LEFT_CAMERA_OFFSET);
+    private final VisionDevice side = new VisionDevice("OV2311-Side", FRONT_RIGHT_CAMERA_OFFSET);
     // private final VisionDevice back = new VisionDevice("back",
     // VisionConstants.BACK_CAMERA_OFFSET);
     private boolean visionDisabled = true; // Enable after camera names and transforms are verified.
 
-    private final List<VisionDevice> devices = List.of(frontL, frontR);
+    private final List<VisionDevice> devices = List.of(turret, side);
     private final TelemetryManager telemetry = TelemetryManager.getInstance();
 
     // ----------------- SIMULATION -----------------
@@ -61,8 +66,8 @@ public class Vision extends SubsystemBase {
             // Create a PhotonCameraSim which will update the linked PhotonCamera's values
             // with visible
             // targets.
-            leftCameraSim = new PhotonCameraSim(frontL.returnCam(), leftCameraProp);
-            rightCameraSim = new PhotonCameraSim(frontR.returnCam(), rightCameraProp);
+            leftCameraSim = new PhotonCameraSim(turret.returnCam(), leftCameraProp);
+            rightCameraSim = new PhotonCameraSim(side.returnCam(), rightCameraProp);
 
             leftCameraSim.enableDrawWireframe(true);
             rightCameraSim.enableDrawWireframe(true);
@@ -85,6 +90,8 @@ public class Vision extends SubsystemBase {
 
     @Override
     public void periodic() {
+        Transform3d transform = new Transform3d(FRONT_LEFT_CAMERA_OFFSET.getTranslation(), new Rotation3d(0,0,Turret.getAngle().in(Radians)));
+        turret.updateOffset(transform);
         devices.forEach(visionDevice -> visionDevice.updatePosition(Swerve.getInstance()));
         int connectedCount = (int) devices.stream().filter(VisionDevice::isConnected).count();
         telemetry.publishVisionState(new VisionSnapshot(

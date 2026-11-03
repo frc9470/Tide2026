@@ -123,7 +123,7 @@ public final class TideAutoRoutine {
     /** Feeds balls into the shooter for a fixed time. Afterwards the Dye goes back to its default (stopped) command. */
     private static Command shoot(Dye dye) {
         return Commands.none();
-        //return dye.feed().withTimeout(SHOT_DURATION_SEC);
+        //return dye.feed().withTimeout(SHOT_DURATION_SEC); // command was removed from shooter btw so ur gonna have to modify this
     }
 
     /** Makes the robot hold still. The auto keeps control of the drivetrain the whole time, so we stop it ourselves. */
