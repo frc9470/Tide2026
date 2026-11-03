@@ -76,19 +76,18 @@ public class RobotContainer {
 
       
     //dye
-    // if(driver.rightTrigger(0.3).getAsBoo.325lean()){
+    if(driver.rightTrigger(0.3).getAsBoolean()){
       dye.setVelocity(2,-50);
-    // }else{
-       //dye.setVelocity(-0.5,0);
-    // }
+     }else{
+       dye.setVelocity(-0.5,0);
+     }
     
     //intake
-    // if(driver.leftTrigger(0.3).getAsBoolean()){
-    //   intake.deploy();
-    // }else{
-    //   intake.stow();
-    // }
-    intake.deploy();
+    if(driver.leftTrigger(0.3).getAsBoolean()){
+      intake.deploy();
+    }else {
+      
+    }
     
     
   }

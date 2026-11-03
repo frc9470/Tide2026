@@ -10,6 +10,7 @@ import com.team254.lib.drivers.TalonUtil;
 import com.team9470.Ports;
 
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -26,7 +27,7 @@ public class Intake extends SubsystemBase{
     public boolean deployed = false;
     public boolean agitating = false;
     public boolean rollersRunning = false;
-
+    private Timer timer = new Timer();
 
     public Intake() {
         rightRollerMotor = TalonFXFactory.createDefaultTalon(Ports.RIGHT_ROLLER_MOTOR);
@@ -70,18 +71,12 @@ public class Intake extends SubsystemBase{
         leftIntakeMotor.setControl(
             intakePositionRequest.withPosition(IntakeConstants.LEFT_DEPLOYED_POSITION_ROTATIONS));
         deployed = true;
-        agitating = false;
     }
 
     public void stow() {
         rightIntakeMotor.setControl(
             intakePositionRequest.withPosition(IntakeConstants.STOWED_POSITION_ROTATIONS));
-        deployed = false;
-    }
-
-    public void setAgitiating() {
-        agitating = true;
-        deployed = false;
+        leftIntakeMotor.setControl(intakePositionRequest.withPosition(IntakeConstants.STOWED_POSITION_ROTATIONS));
     }
 
     public boolean isDeployed() {
