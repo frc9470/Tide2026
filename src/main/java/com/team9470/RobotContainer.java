@@ -77,9 +77,9 @@ public class RobotContainer {
       
     //dye
     if(driver.rightTrigger(0.3).getAsBoolean()){
-      dye.setVelocity(2,-50);
+      dye.feed();
      }else{
-       dye.setVelocity(-0.5,0);
+       dye.reverse();
      }
     
     //intake

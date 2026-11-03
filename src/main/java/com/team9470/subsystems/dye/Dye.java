@@ -89,6 +89,19 @@ public class Dye extends SubsystemBase {
         leftRoller.setControl(neutralRequest);
     }
 
+    public void feed(){
+        targetVelocityRps = rotorRps;
+        rollerTargetRps = rollerRps;
+        dye.setControl(velocityRequest.withVelocity(DyeConstants.FEED_VELOCITY_RPS));
+        leftRoller.setControl(rollerRequest.withVelocity(DyeConstants.FEED_VELOCITY_RPS * 20));
+    }
+    
+    public void reverse(){
+        targetVelocityRps = rotorRps;
+        rollerTargetRps = rollerRps;
+        dye.setControl(velocityRequest.withVelocity(DyeConstants.REVERSE_VELOCITY_RPS_VELOCITY_RPS));
+        leftRoller.setControl(rollerRequest.withVelocity(0));
+    }
     // public Command feed() {
     //     return runEnd(() -> setVelocity(DyeConstants.FEED_VELOCITY_RPS, coaxMotorSetpointRps(DyeConstants.FEED_VELOCITY_RPS, true)),
     //             this::setNeutral);
