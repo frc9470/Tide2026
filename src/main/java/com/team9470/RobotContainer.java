@@ -24,7 +24,7 @@ public class RobotContainer {
   private final CommandXboxController driver =
       new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
-  private final Swerve swerve;
+  //private final Swerve swerve;
   private Intake intake;
   //privae Turret turret;
   private Dye dye;
@@ -37,11 +37,11 @@ public class RobotContainer {
     // the clone before enabling construction of motor controllers.
     if (!HardwareConfig.DRIVETRAIN_VERIFIED) {
       DriverStation.reportWarning("Drivetrain disabled: verify TunerConstants and HardwareConfig", false);
-      swerve = null;
+      //swerve = null;
       return;
     }
     intake = new Intake();
-    swerve = Swerve.getInstance();
+    //swerve = Swerve.getInstance();
     //turret = new Turret(swerve);
     dye = new Dye();
 
@@ -58,36 +58,36 @@ public class RobotContainer {
   }
 
   private void configureDriveBindings() {
-    double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    double maxAngularRate = Math.toRadians(TunerConstants.maxAngularVelocity);
-    SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-        .withDeadband(maxSpeed * 0.1)
-        .withRotationalDeadband(maxAngularRate * 0.1)
-        .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
-    SwerveRequest.SwerveDriveBrake xLock = new SwerveRequest.SwerveDriveBrake();
+    // double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    // double maxAngularRate = Math.toRadians(TunerConstants.maxAngularVelocity);
+    // SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+    //     .withDeadband(maxSpeed * 0.1)
+    //     .withRotationalDeadband(maxAngularRate * 0.1)
+    //     .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
+    // SwerveRequest.SwerveDriveBrake xLock = new SwerveRequest.SwerveDriveBrake();
 
-    swerve.setDefaultCommand(swerve.applyRequest(() -> drive
-        .withVelocityX(-driver.getLeftY() * maxSpeed)
-        .withVelocityY(-driver.getLeftX() * maxSpeed)
-        .withRotationalRate(-driver.getRightX() * maxAngularRate )));
-    driver.x().whileTrue(swerve.applyRequest(() -> xLock));
-    driver.back().and(DriverStation::isTestEnabled)
-        .whileTrue(new WheelRadiusCharacterization(swerve));
+    // swerve.setDefaultCommand(swerve.applyRequest(() -> drive
+    //     .withVelocityX(-driver.getLeftY() * maxSpeed)
+    //     .withVelocityY(-driver.getLeftX() * maxSpeed)
+    //     .withRotationalRate(-driver.getRightX() * maxAngularRate )));
+    // driver.x().whileTrue(swerve.applyRequest(() -> xLock));
+    // driver.back().and(DriverStation::isTestEnabled)
+    //     .whileTrue(new WheelRadiusCharacterization(swerve));
 
       
     //dye
-    if(driver.rightTrigger(0.3).getAsBoolean()){
-      dye.feed();
-    }else{
-      dye.reverse();
-    }
+    // if(driver.rightTrigger(0.3).getAsBoo.325lean()){
+      //dye.setVelocity(2,-50);
+    // }else{
+       //dye.setVelocity(-0.5,0);
+    // }
     
     //intake
-    if(driver.leftTrigger(0.3).getAsBoolean()){
-      intake.deploy();
-    }else{
-      intake.stow();
-    }
+    // if(driver.leftTrigger(0.3).getAsBoolean()){
+    //   intake.deploy();
+    // }else{
+    //   intake.stow();
+    // }
     
     
   }

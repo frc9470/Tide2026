@@ -33,7 +33,7 @@ public class Dye extends SubsystemBase {
         TalonUtil.applyAndCheckConfiguration(rightRoller, DyeConstants.getRollerFollowerConfig());
         rightRoller.setControl(new Follower(Ports.DYE_LEFT_ROLLER.getDeviceNumber(),
                 DyeConstants.RIGHT_ROLLER_OPPOSES_LEFT ? MotorAlignmentValue.Opposed : MotorAlignmentValue.Aligned));
-        setDefaultCommand(stop());
+        //setDefaultCommand(stop());
     }
 
     @Override
@@ -75,7 +75,7 @@ public class Dye extends SubsystemBase {
                 && MathUtil.isNear(rollerTargetRps, getRollerVelocityRps(), DyeConstants.ROLLER_VELOCITY_TOLERANCE_RPS);
     }
 
-    private void setVelocity(double rotorRps, double rollerRps) {
+    public void setVelocity(double rotorRps, double rollerRps) {
         targetVelocityRps = rotorRps;
         rollerTargetRps = rollerRps;
         dye.setControl(velocityRequest.withVelocity(rotorRps));
@@ -89,17 +89,17 @@ public class Dye extends SubsystemBase {
         leftRoller.setControl(neutralRequest);
     }
 
-    public Command feed() {
-        return runEnd(() -> setVelocity(DyeConstants.FEED_VELOCITY_RPS, coaxMotorSetpointRps(DyeConstants.FEED_VELOCITY_RPS, true)),
-                this::setNeutral);
-    }
+    // public Command feed() {
+    //     return runEnd(() -> setVelocity(DyeConstants.FEED_VELOCITY_RPS, coaxMotorSetpointRps(DyeConstants.FEED_VELOCITY_RPS, true)),
+    //             this::setNeutral);
+    // }
 
-    public Command reverse() {
-        return runEnd(() -> setVelocity(DyeConstants.REVERSE_VELOCITY_RPS, coaxMotorSetpointRps(DyeConstants.REVERSE_VELOCITY_RPS, false)),
-                this::setNeutral);
-    }
+    // public Command reverse() {
+    //     return runEnd(() -> setVelocity(DyeConstants.REVERSE_VELOCITY_RPS, coaxMotorSetpointRps(DyeConstants.REVERSE_VELOCITY_RPS, false)),
+    //             this::setNeutral);
+    // }
 
-    public Command stop() {
-        return run(this::setNeutral);
-    }
+    // public Command stop() {
+    //     return run(this::setNeutral);
+    // }
 }

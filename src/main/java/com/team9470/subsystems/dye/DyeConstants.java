@@ -12,8 +12,8 @@ public final class DyeConstants {
     public static final double COAX_GEAR = (30.0 / 24) * (30.0 / 40);
     public static final double FEED_MULTI = 20.0;
 
-    public static final double FEED_VELOCITY_RPS = 0;
-    public static final double REVERSE_VELOCITY_RPS = 0;
+    public static final double FEED_VELOCITY_RPS = 10;
+    public static final double REVERSE_VELOCITY_RPS = 50;
     public static final double VELOCITY_TOLERANCE_RPS = 1;
 
     public static final double GEAR_RATIO = 1;
@@ -21,7 +21,7 @@ public final class DyeConstants {
 
     public static final double kS = 0;
     public static final double kV = 0;
-    public static final double kP = 0;
+    public static final double kP = 3;
 
     // Rollers: left is the leader, right follows. Both gears drive the same belt.
     // Set true if the right motor must spin opposite the left (mirrored mounting).
@@ -33,7 +33,7 @@ public final class DyeConstants {
     public static final double ROLLER_STATOR_CURRENT_LIMIT = 40;
     public static final double ROLLER_kS = 0;
     public static final double ROLLER_kV = 0;
-    public static final double ROLLER_kP = 0;
+    public static final double ROLLER_kP = 6;
 
     public static TalonFXConfiguration getConfig() {
         TalonFXConfiguration config = new TalonFXConfiguration();
