@@ -31,7 +31,7 @@ public class Shooter extends SubsystemBase {
 
     private final MotionMagicVelocityVoltage motionMagic = new MotionMagicVelocityVoltage(0);
     private final MotionMagicVoltage hoodMotionMagic = new MotionMagicVoltage(0);
-    public static targetShooterVelocity = 0;
+    public static double targetShooterVelocity = 0;
     public static Angle targetHoodAngle = Units.Degrees.of(0);
     private double distance = 0;
     private Swerve poseSlave;
