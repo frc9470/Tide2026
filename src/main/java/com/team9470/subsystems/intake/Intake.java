@@ -40,8 +40,8 @@ public class Intake extends SubsystemBase{
         TalonUtil.applyAndCheckConfiguration(rightRollerMotor, IntakeConstants.kRightRollerConfig);
         TalonUtil.applyAndCheckConfiguration(leftRollerMotor, IntakeConstants.kLeftRollerConfig);
 
-        TalonUtil.applyAndCheckConfiguration(rightIntakeMotor, IntakeConstants.kRightIntakeDeployConfig);
-        TalonUtil.applyAndCheckConfiguration(leftIntakeMotor, IntakeConstants.kLeftIntakeDeployConfig);
+        TalonUtil.applyAndCheckConfiguration(rightIntakeMotor, IntakeConstants.getConfig());
+        TalonUtil.applyAndCheckConfiguration(leftIntakeMotor, IntakeConstants.getReverseConfig());
 
         TalonUtil.applyAndCheckConfiguration(kickerMotor, IntakeConstants.kKickerRollerConfig);
     }
@@ -67,6 +67,8 @@ public class Intake extends SubsystemBase{
      public void deploy() {
         rightIntakeMotor.setControl(
             intakePositionRequest.withPosition(IntakeConstants.DEPLOYED_POSITION_ROTATIONS));
+        leftIntakeMotor.setControl(
+            intakePositionRequest.withPosition(IntakeConstants.LEFT_DEPLOYED_POSITION_ROTATIONS));
         deployed = true;
         agitating = false;
     }

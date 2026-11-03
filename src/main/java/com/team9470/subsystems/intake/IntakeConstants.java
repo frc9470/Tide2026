@@ -17,23 +17,50 @@ public class IntakeConstants {
 
 
     //fix
-    public static final double kIntakeStatorCurrentLimit = 999.0;
-    public static final double kIntakeSupplyCurrentLimit = 999.0;
+    public static final double kIntakeStatorCurrentLimit = 40.0;
+    public static final double kIntakeSupplyCurrentLimit = 40.0;
 
-    public static final double kRollerStatorCurrentLimit = 999.0;
-    public static final double kRollerSupplyCurrentLimit = 999.0;
+    public static final double kRollerStatorCurrentLimit = 40;
+    public static final double kRollerSupplyCurrentLimit = 40;
 
-    public static final double kKickerStatorCurrentLimit = 999.0;
-    public static final double kKickerSupplyCurrentLimit = 999.0;
+    public static final double kKickerStatorCurrentLimit = 40;
+    public static final double kKickerSupplyCurrentLimit = 40;
 
 
-    public static final double ROLLER_SPEED = 12.0;
+    public static final double ROLLER_SPEED = 10;
 
-    public static final double DEPLOYED_POSITION_ROTATIONS = 0.0;
-    public static final double STOWED_POSITION_ROTATIONS = 0.0;
+    public static final double DEPLOYED_POSITION_ROTATIONS = -12.5;
+    public static final double LEFT_DEPLOYED_POSITION_ROTATIONS = -14;
+    public static final double STOWED_POSITION_ROTATIONS = -10;
 
-    public static final double KICKER_SPEED = 3.0;
-
+    public static final double KICKER_SPEED = 6;
+    public static final int kS = 0;
+    public static final int kV = 0;
+    public static final int kP = 2;
+    public static TalonFXConfiguration getConfig() {
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        config.Slot0.kS = kS;
+        config.Slot0.kV = kV;
+        config.Slot0.kP = kP;
+        config.Feedback.SensorToMechanismRatio = 1;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        config.CurrentLimits.StatorCurrentLimit = kIntakeStatorCurrentLimit;
+        return config;
+    }
+    public static TalonFXConfiguration getReverseConfig() {
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        config.Slot0.kS = kS;
+        config.Slot0.kV = kV;
+        config.Slot0.kP = kP;
+        config.Feedback.SensorToMechanismRatio = 1;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        config.CurrentLimits.StatorCurrentLimit = kIntakeStatorCurrentLimit;
+        return config;
+    }
     static {
 
         //Right Roller

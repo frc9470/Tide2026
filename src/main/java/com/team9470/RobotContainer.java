@@ -53,8 +53,8 @@ public class RobotContainer {
   }
 
   private void configureAutos() {
-    AutoFactory autoFactory = swerve.createAutoFactory();
-    autoChooser.addOption("Tide Auto", TideAutoRoutine.build(autoFactory, swerve, intake, dye));
+    //AutoFactory autoFactory = swerve.createAutoFactory();
+    //autoChooser.addOption("Tide Auto", TideAutoRoutine.build(autoFactory, swerve, intake, dye));
   }
 
   private void configureDriveBindings() {
@@ -77,7 +77,7 @@ public class RobotContainer {
       
     //dye
     // if(driver.rightTrigger(0.3).getAsBoo.325lean()){
-      //dye.setVelocity(2,-50);
+      dye.setVelocity(2,-50);
     // }else{
        //dye.setVelocity(-0.5,0);
     // }
@@ -88,6 +88,7 @@ public class RobotContainer {
     // }else{
     //   intake.stow();
     // }
+    intake.deploy();
     
     
   }
