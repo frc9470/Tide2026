@@ -2,6 +2,8 @@ package com.team9470;
 
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import choreo.auto.AutoFactory;
+import com.team9470.commands.TideAutoRoutine;
 import com.team9470.commands.WheelRadiusCharacterization;
 import com.team9470.subsystems.swerve.Swerve;
 import com.team9470.subsystems.vision.Vision;
@@ -47,6 +49,12 @@ public class RobotContainer {
       Vision.getInstance().setVisionDisabled(false);
     }
     configureDriveBindings();
+    configureAutos();
+  }
+
+  private void configureAutos() {
+    AutoFactory autoFactory = swerve.createAutoFactory();
+    autoChooser.addOption("Tide Auto", TideAutoRoutine.build(autoFactory, swerve, intake, dye));
   }
 
   private void configureDriveBindings() {
@@ -87,4 +95,4 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
-}
+} 
