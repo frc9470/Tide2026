@@ -84,9 +84,9 @@ public class RobotContainer {
     
     //intake
     if(driver.leftTrigger(0.3).getAsBoolean()){
-      intake.deploy();
+      intake.agitate();
     }else {
-      
+      intake.deploy();
     }
     
     
