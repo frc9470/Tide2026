@@ -17,7 +17,7 @@ public final class VisionConstants {
                         Units.Inches.of(21.147), // z
                         new Rotation3d(
                                         0, // roll
-                                        Math.toRadians(-20), // pitch
+                                        Math.toRadians(-10), // pitch
                                         Math.toRadians(0) // yaw
                         ));
 
