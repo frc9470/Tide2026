@@ -95,7 +95,7 @@ public class Dye extends SubsystemBase {
     }
     
     public void reverse(){
-        dye.setControl(velocityRequest.withVelocity(DyeConstants.REVERSE_VELOCITY_RPS_VELOCITY_RPS));
+        dye.setControl(velocityRequest.withVelocity(DyeConstants.REVERSE_VELOCITY_RPS));
         leftRoller.setControl(rollerRequest.withVelocity(0));
     }
     // public Command feed() {
