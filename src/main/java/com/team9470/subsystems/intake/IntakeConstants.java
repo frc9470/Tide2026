@@ -29,14 +29,14 @@ public class IntakeConstants {
 
     public static final double ROLLER_SPEED = 10;
 
-    public static final double DEPLOYED_POSITION_ROTATIONS = -12.5;
-    public static final double LEFT_DEPLOYED_POSITION_ROTATIONS = -14;
-    public static final double STOWED_POSITION_ROTATIONS = -10;
+    public static final double DEPLOYED_POSITION_ROTATIONS = -17;
+    public static final double LEFT_DEPLOYED_POSITION_ROTATIONS = -17;
+    public static final double STOWED_POSITION_ROTATIONS = -8;
 
     public static final double KICKER_SPEED = 6;
     public static final int kS = 0;
     public static final int kV = 0;
-    public static final int kP = 2;
+    public static final int kP = 4;
     public static TalonFXConfiguration getConfig() {
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.Slot0.kS = kS;

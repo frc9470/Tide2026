@@ -12,10 +12,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import com.team9470.subsystems.turret.Turret;
 import com.team9470.subsystems.dye.Dye;
 import com.team9470.subsystems.intake.Intake;
+import com.team9470.subsystems.shooter.Shooter;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
@@ -24,9 +29,10 @@ public class RobotContainer {
   private final CommandXboxController driver =
       new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
-  //private final Swerve swerve;
+  private Swerve swerve;
   private Intake intake;
   //privae Turret turret;
+  private Shooter shooter;
   private Dye dye;
 
   public RobotContainer() {
@@ -41,7 +47,9 @@ public class RobotContainer {
       return;
     }
     intake = new Intake();
-    //swerve = Swerve.getInstance();
+
+    swerve = Swerve.getInstance();
+    shooter = new Shooter(swerve);
     //turret = new Turret(swerve);
     dye = new Dye();
 
@@ -58,38 +66,40 @@ public class RobotContainer {
   }
 
   private void configureDriveBindings() {
-    // double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    // double maxAngularRate = Math.toRadians(TunerConstants.maxAngularVelocity);
-    // SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-    //     .withDeadband(maxSpeed * 0.1)
-    //     .withRotationalDeadband(maxAngularRate * 0.1)
-    //     .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
-    // SwerveRequest.SwerveDriveBrake xLock = new SwerveRequest.SwerveDriveBrake();
+    double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    double maxAngularRate = Math.toRadians(TunerConstants.maxAngularVelocity);
+    SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+        .withDeadband(maxSpeed * 0.1)
+        .withRotationalDeadband(maxAngularRate * 0.1)
+        .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
+    SwerveRequest.SwerveDriveBrake xLock = new SwerveRequest.SwerveDriveBrake();
 
-    // swerve.setDefaultCommand(swerve.applyRequest(() -> drive
-    //     .withVelocityX(-driver.getLeftY() * maxSpeed)
-    //     .withVelocityY(-driver.getLeftX() * maxSpeed)
-    //     .withRotationalRate(-driver.getRightX() * maxAngularRate )));
-    // driver.x().whileTrue(swerve.applyRequest(() -> xLock));
-    // driver.back().and(DriverStation::isTestEnabled)
-    //     .whileTrue(new WheelRadiusCharacterization(swerve));
+    swerve.setDefaultCommand(swerve.applyRequest(() -> drive
+        .withVelocityX(-driver.getLeftY() * maxSpeed)
+        .withVelocityY(-driver.getLeftX() * maxSpeed)
+        .withRotationalRate(-driver.getRightX() * maxAngularRate )));
+    driver.x().whileTrue(swerve.applyRequest(() -> xLock));
+    driver.back().and(DriverStation::isTestEnabled)
+        .whileTrue(new WheelRadiusCharacterization(swerve));
 
       
-    //dye
-    if(driver.rightTrigger(0.3).getAsBoolean()){
-      dye.feed();
-     }else{
-       dye.reverse();
-     }
+// Dye
+dye.reverse();
+new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+    .whileTrue(new RunCommand(() -> dye.feed(), dye))
+    .onFalse(new InstantCommand(() -> dye.reverse(), dye));
+intake.deploy();
+// // Intake
+// new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
+//     .whileTrue(new RunCommand(() -> intake.agitate(), intake))
+//     .onFalse(new InstantCommand(() -> intake.deploy(), intake));
     
-    //intake
-    if(driver.leftTrigger(0.3).getAsBoolean()){
-      intake.agitate();
-    }else {
-      intake.deploy();
-    }
-    
-    
+//Shooter
+shooter.setTargetVelocity(50);
+new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+    .whileTrue(new RunCommand(() -> shooter.setTargetVelocity(50), shooter))
+    .onFalse(new InstantCommand(() -> shooter.setTargetVelocity(50), shooter));
+
   }
 
   public Command getAutonomousCommand() {

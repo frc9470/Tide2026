@@ -17,7 +17,7 @@ public final class DyeConstants {
     public static final double VELOCITY_TOLERANCE_RPS = 1;
 
     public static final double GEAR_RATIO = 1;
-    public static final double STATOR_CURRENT_LIMIT = 40;
+    public static final double STATOR_CURRENT_LIMIT = 150;
 
     public static final double kS = 0;
     public static final double kV = 0;
