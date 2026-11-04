@@ -26,7 +26,7 @@ public final class ShooterConstants {
         config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = ACCELERATION;
         config.MotionMagic.MotionMagicJerk = JERK;
-        config.Slot0.kP = 0.0;
+        config.Slot0.kP = 3.0;
         config.Slot0.kD = 0.0;
         config.Slot0.kS = 0.0;
         config.Slot0.kV = 0.0;
@@ -35,7 +35,7 @@ public final class ShooterConstants {
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.StatorCurrentLimit = 40;
-        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         return config;
     }
 
@@ -44,7 +44,7 @@ public final class ShooterConstants {
         config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = ACCELERATION;
         config.MotionMagic.MotionMagicJerk = JERK;
-        config.Slot0.kP = 0.0;
+        config.Slot0.kP = 3.0;
         config.Slot0.kD = 0.0;
         config.Slot0.kS = 0.0;
         config.Slot0.kV = 0.0;
@@ -53,7 +53,7 @@ public final class ShooterConstants {
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.StatorCurrentLimit = 40;
-        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         return config;
     }
 

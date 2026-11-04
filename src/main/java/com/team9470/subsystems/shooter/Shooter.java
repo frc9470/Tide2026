@@ -57,8 +57,8 @@ public class Shooter extends SubsystemBase {
         calculateTargetMain();
         targetHoodAngle = Units.Rotations.of(MathUtil.clamp(targetHoodAngle.in(Rotations), ShooterConstants.lowerLimit.in(Rotations), ShooterConstants.upperLimit.in(Rotations)));
         //targetVelocity = controller.calculate(getAngle().in(Rotations), targetAngle.in(Rotations));
-        setTargetAngle(targetHoodAngle);
-        setTargetVelocity(targetShooterVelocity);
+        //setTargetAngle(targetHoodAngle);
+        //setTargetVelocity(targetShooterVelocity);
         // setTargetAngle(calculateHoodAngle());
         // setTargetVelocity(calculateVelocity());
         shooterMotor1.setControl(motionMagic.withVelocity(targetShooterVelocity));
@@ -85,7 +85,7 @@ public class Shooter extends SubsystemBase {
         return shooterMotor1.getVelocity().getValueAsDouble();
     }
 
-    private void setTargetVelocity(double velocity) {
+    public void setTargetVelocity(double velocity) {
         targetShooterVelocity = velocity;
     }
     private void calculateTargetMain(){
