@@ -10,13 +10,23 @@ import edu.wpi.first.units.measure.Angle;
 public final class ShooterConstants {
     private ShooterConstants() {
     }
-    public static final Angle upperLimit = Units.Rotations.of(0);
-    public static final Angle lowerLimit = Units.Rotations.of(1);
+    public static final Angle upperLimit = Units.Degrees.of(0);
+    public static final Angle lowerLimit = Units.Degrees.of(50);
     public static final double CRUISE_VELOCITY = 2;
     public static final double ACCELERATION = 15; 
     public static final double JERK = 0; 
 
+    public static final double kP = 3.0;
+    public static final double kD = 0.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.0;
+    public static final double kA = 0.0;
     
+    public static final double hoodkP = 0.0;
+    public static final double hoodkD = 0.0;
+    public static final double hoodkG = 0.0;
+    public static final double hoodkS = 0.0;
+
     public static final double SHOOTER_GEAR_RATIO1 = 20.0 / 36.0; // was 20/36, which is integer division = 0
     public static final double SHOOTER_GEAR_RATIO2 = 1;
     public static final double HOOD_GEAR_RATIO = (8.0 / 24.0) * (24.0 / 20.0); // was integer division = 0
@@ -26,11 +36,11 @@ public final class ShooterConstants {
         config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = ACCELERATION;
         config.MotionMagic.MotionMagicJerk = JERK;
-        config.Slot0.kP = 3.0;
-        config.Slot0.kD = 0.0;
-        config.Slot0.kS = 0.0;
-        config.Slot0.kV = 0.0;
-        config.Slot0.kA = 0.0;
+        config.Slot0.kP = kP;
+        config.Slot0.kD = kD;
+        config.Slot0.kS = kS;
+        config.Slot0.kV = kV;
+        config.Slot0.kA = kA;
         config.Feedback.SensorToMechanismRatio = SHOOTER_GEAR_RATIO1;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -44,11 +54,11 @@ public final class ShooterConstants {
         config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = ACCELERATION;
         config.MotionMagic.MotionMagicJerk = JERK;
-        config.Slot0.kP = 3.0;
-        config.Slot0.kD = 0.0;
-        config.Slot0.kS = 0.0;
-        config.Slot0.kV = 0.0;
-        config.Slot0.kA = 0.0;
+        config.Slot0.kP = kP;
+        config.Slot0.kD = kD;
+        config.Slot0.kS = kS;
+        config.Slot0.kV = kV;
+        config.Slot0.kA = kA;
         config.Feedback.SensorToMechanismRatio = SHOOTER_GEAR_RATIO2;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -62,10 +72,10 @@ public final class ShooterConstants {
         config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = ACCELERATION;
         config.MotionMagic.MotionMagicJerk = JERK;
-        config.Slot0.kP = 0.0;
-        config.Slot0.kD = 0.0;
-        config.Slot0.kS = 0.0;
-        config.Slot0.kG = 0.0;
+        config.Slot0.kP = hoodkP;
+        config.Slot0.kD = hoodkD;
+        config.Slot0.kS = hoodkS;
+        config.Slot0.kG = hoodkG;
         config.Feedback.SensorToMechanismRatio = HOOD_GEAR_RATIO;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.CurrentLimits.StatorCurrentLimitEnable = true;

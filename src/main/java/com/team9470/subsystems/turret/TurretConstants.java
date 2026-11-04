@@ -14,6 +14,9 @@ public final class TurretConstants {
     public static final Angle lowerLimit = Units.Rotations.of(1);
     public static final double kP = 0;
     public static final double kD = 0;
+    public static final double kS = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
     public static final double CRUISE_VELOCITY = 2;
     public static final double ACCELERATION = 15; 
     public static final double JERK = 0; 
@@ -25,11 +28,11 @@ public final class TurretConstants {
         config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = ACCELERATION;
         config.MotionMagic.MotionMagicJerk = JERK;
-        config.Slot0.kP = 0.0;
-        config.Slot0.kD = 0.0;
-        config.Slot0.kS = 0.0;
-        config.Slot0.kV = 0.0;
-        config.Slot0.kA = 0.0;
+        config.Slot0.kP = kP;
+        config.Slot0.kD = kD;
+        config.Slot0.kS = kS;
+        config.Slot0.kV = kV;
+        config.Slot0.kA = kD;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.CurrentLimits.StatorCurrentLimitEnable = true;

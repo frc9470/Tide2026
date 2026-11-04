@@ -67,7 +67,6 @@ public class Shooter extends SubsystemBase {
         shooterMotor4.setControl(motionMagic.withVelocity(targetShooterVelocity));
 
         hoodMotor.setControl(hoodMotionMagic.withPosition(targetHoodAngle));
-        //im not paid enough to do no telemetry
         SmartDashboard.putNumber("shooter/TargetAngle", targetHoodAngle.in(Degrees));
         SmartDashboard.putNumber("shooter/Error", targetHoodAngle.in(Degrees)-getAngle().in(Degrees));
         SmartDashboard.putNumber("shooter/TargetShooterVelocity", targetShooterVelocity);

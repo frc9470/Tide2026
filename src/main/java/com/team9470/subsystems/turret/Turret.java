@@ -43,7 +43,6 @@ public class Turret extends SubsystemBase {
         //calculateTargetMain();
         //targetAngle = Units.Rotations.of(MathUtil.clamp(targetAngle.in(Rotations), TurretConstants.lowerLimit.in(Rotations), TurretConstants.upperLimit.in(Rotations)));
         turretMotor.setControl(motionMagic.withPosition(targetAngle));
-        //im not paid enough to do no telemetry
         SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
         SmartDashboard.putNumber("Turret/Error", targetAngle.in(Degrees)-getAngle().in(Degrees));
     }
