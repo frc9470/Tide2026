@@ -180,7 +180,49 @@ public final class TideAutoRoutine {
      * True when the robot's center is at least {@code margin} meters inside our own alliance zone
      * (works on red and blue). With {@link #ZONE_MARGIN_METERS} the whole robot is inside.
      */
-    private static boolean inOurAllianceZone(Swerve swerve, double margin) {
+    @SuppressWarnings("unused")
+    private static Command setShooter(Shooter shooter, double flywheel, double hoodDegrees) {
+        if (shooter == null || SUBSYSTEMS_AIM_THEMSELVES) {
+            return Commands.none();
+        }
+        return Commands.runOnce(() -> {
+            shooter.setTargetVelocity(flywheel);
+            shooter.setTargetAngle(Degrees.of(hoodDegrees));
+        });
+    }
+
+    /**
+     * Keeps the turret pointed at OUR hub, from where the robot actually is. Does nothing if
+     * there is no turret. The angle is relative to the front of the robot, counter-clockwise
+     * positive, wrapped to -180..180 degrees, plus {@link #TURRET_ZERO_OFFSET_DEGREES}.
+     */
+    @SuppressWarnings("unused")
+    private static Command aimTurret(Swerve swerve, Turret turret) {
+        if (turret == null || SUBSYSTEMS_AIM_THEMSELVES) { // Turret.periodic() aims itself
+            return Commands.none();
+        }
+        return Commands.run(() -> {
+            Pose2d robot = swerve.getPose();
+            Translation2d toHub = ourHub(swerve).minus(robot.getTranslation());
+            double degrees = toHub.getAngle().minus(robot.getRotation()).getDegrees()
+                    + TURRET_ZERO_OFFSET_DEGREES;
+            Turret.targetAngle = Degrees.of(Math.IEEEremainder(degrees, 360.0));
+        });
+    }
+
+    /** Our alliance's hub. FieldConstants.Hub only has the blue one, so rotate it for red. */
+    private static Translation2d ourHub(Swerve swerve) {
+        Translation2d blueHub = new Translation2d(
+                FieldConstants.Hub.topCenterPoint.getX(), FieldConstants.Hub.topCenterPoint.getY());
+        if (swerve.getAlliance() == Alliance.Red) {
+            return new Translation2d(
+                    FieldConstants.fieldLength - blueHub.getX(), FieldConstants.fieldWidth - blueHub.getY());
+        }
+        return blueHub;
+    }
+
+    /** True when the robot is fully inside our own alliance zone (works on red and blue). */
+    private static boolean inOurAllianceZone(Swerve swerve) {
         double robotX = swerve.getPose().getX();
         double zoneDepth = FieldConstants.LinesVertical.allianceZone; // blue zone line, ~4.02 m from the blue wall
         if (swerve.getAlliance() == Alliance.Red) {
