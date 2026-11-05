@@ -12,6 +12,8 @@ public final class TurretConstants {
     }
     public static final Angle upperLimit = Units.Rotations.of(0);
     public static final Angle lowerLimit = Units.Rotations.of(1);
+    public static final double tof = 0.6;
+    public static final double speedCap = 0.6;
     public static final double kP = 0;
     public static final double kD = 0;
     public static final double kS = 0;

@@ -35,6 +35,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -99,6 +100,8 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     private final SwerveRequest.SwerveDriveBrake brakeRequest = new SwerveRequest.SwerveDriveBrake();
     private double activeDriveStatorCurrentLimitAmps = Double.NaN;
     private boolean turboDriveCurrentLimitEnabled = false;
+
+    public static double overrideTarget = 0;
     /*
      * SysId routine for characterizing translation. This is used to find PID gains
      * for the drive motors.
@@ -397,6 +400,11 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
+    public void targetAngle(double x, double y, Angle heading){
+        overrideTarget = pathThetaController.calculate(
+        getState().Pose.getRotation().getRadians(), heading.in(Radians));
+        setControl(applyFieldSpeeds.withSpeeds(new ChassisSpeeds(x,y,overrideTarget)));
+    }
     /**
      * Follows the given field-centric path sample with PID.
      *
@@ -404,6 +412,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
      */
     public void followPath(SwerveSample sample) {
         pathThetaController.enableContinuousInput(-Math.PI, Math.PI);
+        
 
         var state = getState();
         Pose2d measuredPose = state.Pose;
@@ -702,5 +711,6 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             super.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
         }
     }
+
 
 }

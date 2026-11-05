@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import com.team9470.subsystems.turret.Turret;
+import com.team9470.subsystems.turret.TurretConstants;
 import com.team9470.subsystems.dye.Dye;
 import com.team9470.subsystems.intake.Intake;
 import com.team9470.subsystems.shooter.Shooter;
@@ -86,6 +87,10 @@ public class RobotContainer {
     driver.x().whileTrue(swerve.applyRequest(() -> xLock));
     driver.back().and(DriverStation::isTestEnabled)
         .whileTrue(new WheelRadiusCharacterization(swerve));
+
+//autoaim
+ new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+   .whileTrue(new RunCommand(() -> swerve.targetAngle(-driver.getLeftY() * maxSpeed * TurretConstants.speedCap,-driver.getLeftX() * maxSpeed * TurretConstants.speedCap,Turret.calculateTarget()), swerve));
 
       
 //Dye

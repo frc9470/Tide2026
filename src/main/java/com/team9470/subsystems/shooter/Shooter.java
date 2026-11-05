@@ -8,6 +8,7 @@ import com.team254.lib.drivers.TalonUtil;
 import com.team9470.FieldConstants;
 import com.team9470.Ports;
 import com.team9470.subsystems.swerve.Swerve;
+import com.team9470.subsystems.turret.TurretConstants;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -103,7 +104,8 @@ public class Shooter extends SubsystemBase {
     private void calculateTargetHub() {
         Pose2d robotPose = poseSlave.getPose();
         Translation2d offset = new Pose2d(new Translation2d(FieldConstants.Hub.topCenterPoint.getX(), FieldConstants.Hub.topCenterPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
-        distance = offset.getNorm();
+        Translation2d velocityVector = new Translation2d(Swerve.getInstance().getChassisSpeeds().vxMetersPerSecond * TurretConstants.tof,Swerve.getInstance().getChassisSpeeds().vyMetersPerSecond * TurretConstants.tof);
+        distance = offset.plus(velocityVector).getNorm();
     }
     private void calculateTargetPass() {
         
