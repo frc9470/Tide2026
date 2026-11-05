@@ -45,7 +45,7 @@ public class RobotContainer {
     // the clone before enabling construction of motor controllers.
     if (!HardwareConfig.DRIVETRAIN_VERIFIED) {
       DriverStation.reportWarning("Drivetrain disabled: verify TunerConstants and HardwareConfig", false);
-      //swerve = null;
+      swerve = null;
       return;
     }
     intake = new Intake();
@@ -85,20 +85,20 @@ public class RobotContainer {
         .whileTrue(new WheelRadiusCharacterization(swerve));
 
       
-// Dye
-// dye.reverse();
-// new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
-//     .whileTrue(new RunCommand(() -> dye.feed(), dye))
-//     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
-// intake.deploy();
-// // Intake
-// new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
-//     .whileTrue(new RunCommand(() -> intake.agitate(), intake))
-//     .onFalse(new InstantCommand(() -> intake.deploy(), intake));
+//Dye
+dye.reverse();
+new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+    .whileTrue(new RunCommand(() -> dye.feed(), dye))
+    .onFalse(new InstantCommand(() -> dye.reverse(), dye));
+intake.deploy();
+// Intake
+new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
+    .whileTrue(new RunCommand(() -> intake.agitate(), intake))
+    .onFalse(new InstantCommand(() -> intake.deploy(), intake));
     
-//Shooter
-//shooter.setTargetVelocity(50);
-shooter.setTargetAngle(Units.Rotations.of(1));
+// //Shooter
+shooter.setTargetVelocity(150);
+//shooter.setTargetAngle(Units.Degrees.of(30));
   }
 
   public Command getAutonomousCommand() {
