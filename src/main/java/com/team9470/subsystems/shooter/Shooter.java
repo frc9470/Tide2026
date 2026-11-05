@@ -55,7 +55,7 @@ public class Shooter extends SubsystemBase {
     @Override
     public void periodic() {
         calculateTargetMain();
-        targetHoodAngle = Units.Rotations.of(MathUtil.clamp(targetHoodAngle.in(Rotations), ShooterConstants.lowerLimit.in(Rotations), ShooterConstants.upperLimit.in(Rotations)));
+        //targetHoodAngle = Units.Rotations.of(MathUtil.clamp(targetHoodAngle.in(Rotations), ShooterConstants.lowerLimit.in(Rotations), ShooterConstants.upperLimit.in(Rotations)));
         //targetVelocity = controller.calculate(getAngle().in(Rotations), targetAngle.in(Rotations));
         //setTargetAngle(targetHoodAngle);
         //setTargetVelocity(targetShooterVelocity);
@@ -76,7 +76,7 @@ public class Shooter extends SubsystemBase {
         return hoodMotor.getPosition().getValue();
     }
 
-    private void setTargetAngle(Angle angle) {
+    public void setTargetAngle(Angle angle) {
         targetHoodAngle = angle;
     }
 

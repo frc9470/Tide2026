@@ -16,15 +16,15 @@ public final class ShooterConstants {
     public static final double ACCELERATION = 15; 
     public static final double JERK = 0; 
 
-    public static final double kP = 3.0;
+    public static final double kP = 10.0;
     public static final double kD = 0.0;
     public static final double kS = 0.0;
     public static final double kV = 0.0;
     public static final double kA = 0.0;
     
-    public static final double hoodkP = 0.0;
+    public static final double hoodkP = 5.0;
     public static final double hoodkD = 0.0;
-    public static final double hoodkG = 0.0;
+    public static final double hoodkG = 0.4;
     public static final double hoodkS = 0.0;
 
     public static final double SHOOTER_GEAR_RATIO1 = 20.0 / 36.0; // was 20/36, which is integer division = 0
@@ -42,7 +42,7 @@ public final class ShooterConstants {
         config.Slot0.kV = kV;
         config.Slot0.kA = kA;
         config.Feedback.SensorToMechanismRatio = SHOOTER_GEAR_RATIO1;
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.StatorCurrentLimit = 40;
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -60,7 +60,7 @@ public final class ShooterConstants {
         config.Slot0.kV = kV;
         config.Slot0.kA = kA;
         config.Feedback.SensorToMechanismRatio = SHOOTER_GEAR_RATIO2;
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.StatorCurrentLimit = 40;
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;

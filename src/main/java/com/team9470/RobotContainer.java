@@ -7,6 +7,8 @@ import com.team9470.commands.TideAutoRoutine;
 import com.team9470.commands.WheelRadiusCharacterization;
 import com.team9470.subsystems.swerve.Swerve;
 import com.team9470.subsystems.vision.Vision;
+
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -84,22 +86,19 @@ public class RobotContainer {
 
       
 // Dye
-dye.reverse();
-new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
-    .whileTrue(new RunCommand(() -> dye.feed(), dye))
-    .onFalse(new InstantCommand(() -> dye.reverse(), dye));
-intake.deploy();
+// dye.reverse();
+// new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+//     .whileTrue(new RunCommand(() -> dye.feed(), dye))
+//     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
+// intake.deploy();
 // // Intake
 // new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
 //     .whileTrue(new RunCommand(() -> intake.agitate(), intake))
 //     .onFalse(new InstantCommand(() -> intake.deploy(), intake));
     
 //Shooter
-shooter.setTargetVelocity(50);
-new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
-    .whileTrue(new RunCommand(() -> shooter.setTargetVelocity(50), shooter))
-    .onFalse(new InstantCommand(() -> shooter.setTargetVelocity(50), shooter));
-
+//shooter.setTargetVelocity(50);
+shooter.setTargetAngle(Units.Rotations.of(1));
   }
 
   public Command getAutonomousCommand() {
