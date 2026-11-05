@@ -1,5 +1,5 @@
 {
- "name":"TIDE AUTO",
+ "name":"TIDE_AUTO",
  "version":2,
  "type":"Swerve",
  "variables":{
