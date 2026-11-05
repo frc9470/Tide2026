@@ -79,7 +79,7 @@ public class RobotContainer {
     swerve.setDefaultCommand(swerve.applyRequest(() -> drive
         .withVelocityX(-driver.getLeftY() * maxSpeed)
         .withVelocityY(-driver.getLeftX() * maxSpeed)
-        .withRotationalRate(-driver.getRightX() * maxAngularRate )));
+        .withRotationalRate(driver.getRightX() * maxAngularRate )));
     driver.x().whileTrue(swerve.applyRequest(() -> xLock));
     driver.back().and(DriverStation::isTestEnabled)
         .whileTrue(new WheelRadiusCharacterization(swerve));
@@ -98,7 +98,7 @@ new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
     
 // //Shooter
 shooter.setTargetVelocity(150);
-//shooter.setTargetAngle(Units.Degrees.of(30));
+//shooter.setTargetAngle(Units.Rotations.of(30));
   }
 
   public Command getAutonomousCommand() {
