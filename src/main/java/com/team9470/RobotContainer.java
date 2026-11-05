@@ -67,8 +67,11 @@ public class RobotContainer {
   }
 
   private void configureAutos() {
-    //AutoFactory autoFactory = swerve.createAutoFactory();
-    //autoChooser.addOption("Tide Auto", TideAutoRoutine.build(autoFactory, swerve, intake, dye));
+    // Tide Auto: no turret, the robot turns so the shooter (out the back) faces the hub and
+    // shoots on the move after the bump. The Shooter sets its own flywheel speed and hood.
+    AutoFactory autoFactory = swerve.createAutoFactory();
+    autoChooser.addOption("Tide Auto",
+        TideAutoRoutine.build(autoFactory, swerve, intake, dye, shooter));
   }
 
   private void configureDriveBindings() {
