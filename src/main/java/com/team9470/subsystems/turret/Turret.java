@@ -65,9 +65,9 @@ public class Turret extends SubsystemBase {
     public static Angle calculateTarget() {
         Pose2d robotPose = Swerve.getInstance().getPose();
         Translation2d offset = new Pose2d(new Translation2d(FieldConstants.Hub.topCenterPoint.getX(), FieldConstants.Hub.topCenterPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
-        Translation2d velocityVector = new Translation2d(Swerve.getInstance().getChassisSpeeds().vxMetersPerSecond * TurretConstants.tof,Swerve.getInstance().getChassisSpeeds().vyMetersPerSecond * TurretConstants.tof);
-        
-        return offset.plus(velocityVector).getAngle().getMeasure();
+        Translation2d velocityVector = new Translation2d(Swerve.getInstance().getChassisSpeeds().vxMetersPerSecond,Swerve.getInstance().getChassisSpeeds().vyMetersPerSecond).rotateBy(robotPose.getRotation());
+        velocityVector.times(TurretConstants.tof);
+        return offset.minus(velocityVector).getAngle().getMeasure().plus(Radians.of(Math.PI));
     }
     private void calculateTargetPass() {
         
@@ -76,7 +76,7 @@ public class Turret extends SubsystemBase {
         Translation2d leftPass = new Pose2d(new Translation2d(FieldConstants.Depot.depotCenter.getX(), FieldConstants.Depot.depotCenter.getY()), new Rotation2d()).minus(robotPose).getTranslation();
         Translation2d rightPass = new Pose2d(new Translation2d(FieldConstants.Outpost.centerPoint.getX(), FieldConstants.Outpost.centerPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
         
-        setTargetAngle((leftPass.getSquaredNorm() < rightPass.getSquaredNorm() ? leftPass : rightPass).getAngle().getMeasure());
+        setTargetAngle((leftPass.getNorm() < rightPass.getNorm() ? leftPass : rightPass).getAngle().getMeasure());
     }
 
 }

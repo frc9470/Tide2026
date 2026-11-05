@@ -26,6 +26,7 @@ import com.team9470.subsystems.dye.Dye;
 import com.team9470.subsystems.intake.Intake;
 import com.team9470.subsystems.shooter.Shooter;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 /** Shared drive controls and places to add the clone's mechanisms and autonomous routines. */
@@ -91,13 +92,18 @@ public class RobotContainer {
 //autoaim
  new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
    .whileTrue(new RunCommand(() -> swerve.targetAngle(-driver.getLeftY() * maxSpeed * TurretConstants.speedCap,-driver.getLeftX() * maxSpeed * TurretConstants.speedCap,Turret.calculateTarget()), swerve));
-
+//dye(actual)
+dye.reverse();
+new Trigger(() -> driver.getRightTriggerAxis() > 0.3 && Math.abs(swerve.getGyroHeading().getDegrees() - Turret.calculateTarget().in(Degrees)) < 2)
+    .whileTrue(new RunCommand(() -> dye.feed(), dye))
+    .onFalse(new InstantCommand(() -> dye.reverse(), dye));
       
-//Dye
+//Dye(testing)
 dye.reverse();
 new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
     .whileTrue(new RunCommand(() -> dye.feed(), dye))
     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
+
 intake.deploy();
 // Intake
 new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
