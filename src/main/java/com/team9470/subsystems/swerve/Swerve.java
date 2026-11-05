@@ -118,6 +118,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
      * SysId routine for characterizing steer. This is used to find PID gains for
      * the steer motors.
      */
+    @SuppressWarnings("unused")
     private final SysIdRoutine sysIdRoutineSteer = new SysIdRoutine(
             new SysIdRoutine.Config(
                     null, // Use default ramp rate (1 V/s)
@@ -138,6 +139,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
      * See the documentation of SwerveRequest.SysIdSwerveRotation for info on
      * importing the log to SysId.
      */
+    @SuppressWarnings("unused")
     private final SysIdRoutine sysIdRoutineRotation = new SysIdRoutine(
             new SysIdRoutine.Config(
                     /* This is in radians per second², but SysId only supports "volts per second" */
@@ -639,6 +641,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
         /* Run simulation at a faster rate so PID gains behave more reasonably */
         /* use the measured time delta, get battery voltage from WPILib */
+        @SuppressWarnings("resource")
         Notifier m_simNotifier = new Notifier(() -> {
             final double currentTime = Utils.getCurrentTimeSeconds();
             double deltaTime = currentTime - m_lastSimTime;

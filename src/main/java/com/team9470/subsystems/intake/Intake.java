@@ -1,7 +1,5 @@
 package com.team9470.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Volts;
-
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.PositionVoltage;
 
@@ -9,9 +7,7 @@ import com.team254.lib.drivers.TalonFXFactory;
 import com.team254.lib.drivers.TalonUtil;
 import com.team9470.Ports;
 
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase{

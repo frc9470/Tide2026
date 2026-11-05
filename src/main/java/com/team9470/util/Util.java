@@ -5,13 +5,7 @@ package com.team9470.util;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 // MAKE THIS PROPER FOR 2025 SEASON
 

@@ -1,6 +1,5 @@
 package com.team9470.subsystems.turret;
 
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.team254.lib.drivers.TalonFXFactory;
@@ -9,12 +8,9 @@ import com.team9470.FieldConstants;
 import com.team9470.Ports;
 import com.team9470.subsystems.swerve.Swerve;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -54,6 +50,7 @@ public class Turret extends SubsystemBase {
         targetAngle = angle;
     }
 
+    @SuppressWarnings("unused")
     private void calculateTargetMain(){
         if(targetHub) calculateTargetHub();
         else calculateTargetPass();

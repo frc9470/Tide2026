@@ -9,12 +9,9 @@ import com.team9470.FieldConstants;
 import com.team9470.Ports;
 import com.team9470.subsystems.swerve.Swerve;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -93,10 +90,12 @@ public class Shooter extends SubsystemBase {
     
     }
 
+    @SuppressWarnings("unused")
     private Angle calculateHoodAngle(){
         return Degrees.of(distance); // replace with function
     }
 
+    @SuppressWarnings("unused")
     private double calculateVelocity(){
         return distance; // replace with function
     }

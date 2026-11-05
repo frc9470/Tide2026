@@ -11,7 +11,6 @@ import com.team9470.Ports;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Dye extends SubsystemBase {
@@ -82,6 +81,7 @@ public class Dye extends SubsystemBase {
         leftRoller.setControl(rollerRequest.withVelocity(rollerRps));
     }
 
+    @SuppressWarnings("unused")
     private void setNeutral() {
         targetVelocityRps = 0;
         rollerTargetRps = 0;

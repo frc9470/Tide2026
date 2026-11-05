@@ -274,6 +274,7 @@ public final class TideAutoRoutine {
      * Sets the flywheel speed and hood angle that Shooter.periodic() runs to. Does nothing when
      * the Shooter calculates its own setpoints (it would overwrite these every loop anyway).
      */
+    @SuppressWarnings("unused")
     private static Command setShooter(Shooter shooter, double flywheel, double hoodDegrees) {
         if (shooter == null || SUBSYSTEMS_AIM_THEMSELVES) {
             return Commands.none();
@@ -289,6 +290,7 @@ public final class TideAutoRoutine {
      * there is no turret. The angle is relative to the front of the robot, counter-clockwise
      * positive, wrapped to -180..180 degrees, plus {@link #TURRET_ZERO_OFFSET_DEGREES}.
      */
+    @SuppressWarnings("unused")
     private static Command aimTurret(Swerve swerve, Turret turret) {
         if (turret == null || SUBSYSTEMS_AIM_THEMSELVES) { // Turret.periodic() aims itself
             return Commands.none();

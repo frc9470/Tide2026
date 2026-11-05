@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
@@ -20,7 +19,6 @@ import java.util.List;
 
 import static com.team9470.subsystems.vision.VisionConstants.FRONT_LEFT_CAMERA_OFFSET;
 import static com.team9470.subsystems.vision.VisionConstants.FRONT_RIGHT_CAMERA_OFFSET;
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 
 public class Vision extends SubsystemBase {
