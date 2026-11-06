@@ -16,16 +16,17 @@ public final class ShooterConstants {
     public static final double ACCELERATION = 15; 
     public static final double JERK = 0; 
 
-    public static final double kP = 100.0;
+    public static final double kP = 0.0;
     public static final double kD = 0.0;
     public static final double kS = 0.0;
     public static final double kV = 0.0;
     public static final double kA = 0.0;
     
-    public static final double hoodkP = 5.0;
+    public static final double hoodkP = 0;
     public static final double hoodkD = 0.0;
     public static final double hoodkG = 0;
     public static final double hoodkS = 0.0;
+    public static final double hoodkV = 0.0;
 
     public static final double SHOOTER_GEAR_RATIO1 = 20.0 / 36.0; 
     public static final double SHOOTER_GEAR_RATIO2 = 1;
@@ -57,7 +58,6 @@ public final class ShooterConstants {
         config.Slot0.kD = kD;
         config.Slot0.kS = kS;
         config.Slot0.kV = kV;
-        config.Slot0.kA = kA;
         config.Feedback.SensorToMechanismRatio = SHOOTER_GEAR_RATIO2;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -71,7 +71,7 @@ public final class ShooterConstants {
         config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = ACCELERATION;
         config.MotionMagic.MotionMagicJerk = JERK;
-        config.Slot0.kP = hoodkP;
+        config.Slot0.kP = hoodkP;  
         config.Slot0.kD = hoodkD;
         config.Slot0.kS = hoodkS;
         config.Slot0.kG = hoodkG;

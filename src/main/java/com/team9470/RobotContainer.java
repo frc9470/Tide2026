@@ -83,36 +83,36 @@ public class RobotContainer {
 
     swerve.setDefaultCommand(swerve.applyRequest(() -> drive
         .withVelocityX(-driver.getLeftY() * maxSpeed)
-        .withVelocityY(-driver.getLeftX() * maxSpeed)
+        .withVelocityY(driver.getLeftX() * maxSpeed)
         .withRotationalRate(driver.getRightX() * maxAngularRate )));
     driver.x().whileTrue(swerve.applyRequest(() -> xLock));
     driver.back().and(DriverStation::isTestEnabled)
         .whileTrue(new WheelRadiusCharacterization(swerve));
 
 //autoaim
- new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
-   .whileTrue(new RunCommand(() -> swerve.targetAngle(-driver.getLeftY() * maxSpeed * TurretConstants.speedCap,-driver.getLeftX() * maxSpeed * TurretConstants.speedCap,Turret.calculateTarget()), swerve));
+//  new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+//    .whileTrue(new RunCommand(() -> swerve.targetAngle(-driver.getLeftY() * maxSpeed * TurretConstants.speedCap,-driver.getLeftX() * maxSpeed * TurretConstants.speedCap,Turret.calculateTarget()), swerve));
 //dye(actual)
-dye.reverse();
-new Trigger(() -> driver.getRightTriggerAxis() > 0.3 && Math.abs(swerve.getGyroHeading().getDegrees() - Turret.calculateTarget().in(Degrees)) < 2)
-    .whileTrue(new RunCommand(() -> dye.feed(), dye))
-    .onFalse(new InstantCommand(() -> dye.reverse(), dye));
+// dye.reverse();
+// new Trigger(() -> driver.getRightTriggerAxis() > 0.3 && Math.abs(swerve.getGyroHeading().getDegrees() - Turret.calculateTarget().in(Degrees)) < 2)
+//     .whileTrue(new RunCommand(() -> dye.feed(), dye))
+//     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
       
-//Dye(testing)
-dye.reverse();
-new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
-    .whileTrue(new RunCommand(() -> dye.feed(), dye))
-    .onFalse(new InstantCommand(() -> dye.reverse(), dye));
+// //Dye(testing)
+// dye.reverse();
+// new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+//     .whileTrue(new RunCommand(() -> dye.feed(), dye))
+//     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
 
-intake.deploy();
-// Intake
-new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
-    .whileTrue(new RunCommand(() -> intake.agitate(), intake))
-    .onFalse(new InstantCommand(() -> intake.deploy(), intake));
+// intake.deploy();
+// // Intake
+// new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
+//     .whileTrue(new RunCommand(() -> intake.agitate(), intake))
+//     .onFalse(new InstantCommand(() -> intake.deploy(), intake));
     
-// //Shooter
-shooter.setTargetVelocity(150);
-//shooter.setTargetAngle(Units.Rotations.of(30));
+// // //Shooter
+// shooter.setTargetVelocity(100);
+// shooter.setTargetAngle(-30);
   }
 
   public Command getAutonomousCommand() {

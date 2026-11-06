@@ -280,7 +280,7 @@ public final class TideAutoRoutine {
         }
         return Commands.runOnce(() -> {
             shooter.setTargetVelocity(flywheel);
-            shooter.setTargetAngle(Degrees.of(hoodDegrees));
+            shooter.setTargetAngle(hoodDegrees);
         });
     }
 
@@ -376,7 +376,7 @@ public final class TideAutoRoutine {
         boolean shooterReady = targetRps >= SHOOTER_MIN_TARGET_RPS
                 && Math.abs(shooter.getVelocity() - targetRps) <= SHOOTER_SPEED_TOLERANCE_RPS;
         boolean hoodReady = Math.abs(
-                shooter.getAngle().in(Degrees) - Shooter.targetHoodAngle.in(Degrees)) <= HOOD_TOLERANCE_DEGREES;
+                shooter.getAngle().in(Degrees) - Shooter.targetHoodAngle) <= HOOD_TOLERANCE_DEGREES;
         boolean turretReady = turret == null // no turret: nothing to wait for
                 || Math.abs(Turret.getAngle().in(Degrees) - Turret.targetAngle.in(Degrees)) <= TURRET_TOLERANCE_DEGREES;
 
