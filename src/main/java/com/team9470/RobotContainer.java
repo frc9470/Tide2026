@@ -111,7 +111,7 @@ new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
      .onFalse(new InstantCommand(() -> intake.deploy(), intake));
     
 // // //Shooter
-shooter.setTargetVelocity(50);  
+//shooter.setTargetVelocity(50);  
 // shooter.setTargetAngle(-30);
   }
 
