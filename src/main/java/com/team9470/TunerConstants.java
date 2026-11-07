@@ -87,16 +87,8 @@ public class TunerConstants {
                                                         .withStatorCurrentLimitEnable(true));
         private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
         // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
-               private static final Pigeon2Configuration pigeonConfigs = new Pigeon2Configuration();
+               private static final Pigeon2Configuration pigeonConfigs = null;
 
-        static {
-                /*
-                 * The Pigeon 2 is mounted 90 degrees counter-clockwise from the robot-forward
-                 * direction, so inform the device of the mount pose to ensure the reported
-                 * yaw matches the robot coordinate frame.
-                 */
-                pigeonConfigs.MountPose.MountPoseYaw = 90.0;
-        }
         // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns.
         // CTRE defines this as the inverse of the 1st drive stage. For SDS MK5n R1
         // with a 12T driving gear into a 54T driven gear, that is 54/12 = 4.5.

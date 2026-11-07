@@ -280,7 +280,7 @@ public final class TideAutoRoutine {
         }
         return Commands.runOnce(() -> {
             shooter.setTargetVelocity(flywheel);
-            shooter.setTargetAngle(hoodDegrees);
+            //shooter.setTargetAngle(hoodDegrees);
         });
     }
 
@@ -334,11 +334,11 @@ public final class TideAutoRoutine {
                         // Start every shooting step as "not ready" so the debounce really waits.
                         () -> readyFor.calculate(false),
                         () -> {
-                            if (readyFor.calculate(isShotReady(shooter, turret))) {
-                                dye.feed();
-                            } else {
-                                dye.reverse();
-                            }
+                            // if (readyFor.calculate(isShotReady(shooter, turret))) {
+                            //     dye.feed();
+                            // } else {
+                            //     dye.reverse();
+                            // }
                         })
                 .finallyDo(dye::reverse);
     }
@@ -368,23 +368,23 @@ public final class TideAutoRoutine {
      * True when the flywheel is at speed and the hood (and turret, if there is one) are on target.
      * Also publishes each part to the dashboard so you can see what the auto is waiting for.
      */
-    private static boolean isShotReady(Shooter shooter, Turret turret) {
-        if (shooter == null) {
-            return true; // can't check; warned about this when the auto was built
-        }
-        double targetRps = Shooter.targetShooterVelocity;
-        boolean shooterReady = targetRps >= SHOOTER_MIN_TARGET_RPS
-                && Math.abs(shooter.getVelocity() - targetRps) <= SHOOTER_SPEED_TOLERANCE_RPS;
-        boolean hoodReady = Math.abs(
-                shooter.getAngle().in(Degrees) - Shooter.targetHoodAngle) <= HOOD_TOLERANCE_DEGREES;
-        boolean turretReady = turret == null // no turret: nothing to wait for
-                || Math.abs(Turret.getAngle().in(Degrees) - Turret.targetAngle.in(Degrees)) <= TURRET_TOLERANCE_DEGREES;
+    // private static boolean isShotReady(Shooter shooter, Turret turret) {
+    //     if (shooter == null) {
+    //         return true; // can't check; warned about this when the auto was built
+    //     }
+    //     double targetRps = Shooter.targetShooterVelocity;
+    //     boolean shooterReady = targetRps >= SHOOTER_MIN_TARGET_RPS
+    //             && Math.abs(shooter.getVelocity() - targetRps) <= SHOOTER_SPEED_TOLERANCE_RPS;
+    //     //boolean hoodReady = Math.abs(
+    //             //shooter.getAngle().in(Degrees) - Shooter.targetHoodAngle) <= HOOD_TOLERANCE_DEGREES;
+    //     boolean turretReady = turret == null // no turret: nothing to wait for
+    //             || Math.abs(Turret.getAngle().in(Degrees) - Turret.targetAngle.in(Degrees)) <= TURRET_TOLERANCE_DEGREES;
 
-        SmartDashboard.putBoolean("Auto/ShooterReady", shooterReady);
-        SmartDashboard.putBoolean("Auto/HoodReady", hoodReady);
-        SmartDashboard.putBoolean("Auto/TurretReady", turretReady);
-        return shooterReady && hoodReady && turretReady;
-    }
+    //     SmartDashboard.putBoolean("Auto/ShooterReady", shooterReady);
+    //     //SmartDashboard.putBoolean("Auto/HoodReady", hoodReady);
+    //     SmartDashboard.putBoolean("Auto/TurretReady", turretReady);
+    //     //return shooterReady && hoodReady && turretReady;
+    // }
 
     /**
      * Stop and X-lock the wheels while shooting, so a bump from another robot doesn't push us

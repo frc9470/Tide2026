@@ -82,8 +82,8 @@ public class RobotContainer {
     SwerveRequest.SwerveDriveBrake xLock = new SwerveRequest.SwerveDriveBrake();
 
     swerve.setDefaultCommand(swerve.applyRequest(() -> drive
-        .withVelocityX(-driver.getLeftX() * maxSpeed)
-        .withVelocityY(driver.getLeftY() * maxSpeed)
+        .withVelocityX(driver.getLeftX() * maxSpeed)
+        .withVelocityY(-driver.getLeftY() * maxSpeed)
         .withRotationalRate(driver.getRightX() * maxAngularRate )));
     driver.x().whileTrue(swerve.applyRequest(() -> xLock));
     driver.back().and(DriverStation::isTestEnabled)
@@ -111,7 +111,7 @@ new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
      .onFalse(new InstantCommand(() -> intake.deploy(), intake));
     
 // // //Shooter
-// shooter.setTargetVelocity(200);  
+shooter.setTargetVelocity(50);  
 // shooter.setTargetAngle(-30);
   }
 
