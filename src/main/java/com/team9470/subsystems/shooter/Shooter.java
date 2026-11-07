@@ -1,6 +1,5 @@
 package com.team9470.subsystems.shooter;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -27,13 +26,11 @@ public class Shooter extends SubsystemBase {
     private final TalonFX shooterMotor3;
     private final TalonFX shooterMotor4;
     private final TalonFX hoodMotor;
-    private double cachedHoodKP, cachedHoodKI, cachedHoodKD, cachedHoodKV, cachedHoodKG;
-    private double cachedShooterKP, cachedShooterKI, cachedShooterKD, cachedShooterKV, cachedShooterKS;
 
     private final MotionMagicVelocityVoltage motionMagic = new MotionMagicVelocityVoltage(0);
     private final MotionMagicVoltage hoodMotionMagic = new MotionMagicVoltage(0);
     public static double targetShooterVelocity = 0;
-    public static double targetHoodAngle = 0;
+    public static Angle targetHoodAngle = Units.Degrees.of(0);
     private double distance = 0;
     private Swerve poseSlave;
     public boolean targetHub = true;
@@ -51,13 +48,10 @@ public class Shooter extends SubsystemBase {
         TalonUtil.applyAndCheckConfiguration(shooterMotor3, ShooterConstants.getBackShooterConfig());
         TalonUtil.applyAndCheckConfiguration(shooterMotor4, ShooterConstants.getBackShooterConfig());
         TalonUtil.applyAndCheckConfiguration(hoodMotor, ShooterConstants.getHoodConfig());
-        initSmartDashboardGains();
     }
 
     @Override
     public void periodic() {
-        updateTargets();
-        updateSmartDashboardGains();
         calculateTargetMain();
         //targetHoodAngle = Units.Rotations.of(MathUtil.clamp(targetHoodAngle.in(Rotations), ShooterConstants.lowerLimit.in(Rotations), ShooterConstants.upperLimit.in(Rotations)));
         //targetVelocity = controller.calculate(getAngle().in(Rotations), targetAngle.in(Rotations));
@@ -71,8 +65,8 @@ public class Shooter extends SubsystemBase {
         shooterMotor4.setControl(motionMagic.withVelocity(targetShooterVelocity));
 
         hoodMotor.setControl(hoodMotionMagic.withPosition(targetHoodAngle));
-        SmartDashboard.putNumber("shooter/TargetAngle", targetHoodAngle);
-        SmartDashboard.putNumber("shooter/Error", targetHoodAngle-getAngle().in(Degrees));
+        SmartDashboard.putNumber("shooter/TargetAngle", targetHoodAngle.in(Degrees));
+        SmartDashboard.putNumber("shooter/Error", targetHoodAngle.in(Degrees)-getAngle().in(Degrees));
         SmartDashboard.putNumber("shooter/TargetShooterVelocity", targetShooterVelocity);
         SmartDashboard.putNumber("shooter/ShooterError", targetShooterVelocity-getVelocity());
     }
@@ -80,7 +74,7 @@ public class Shooter extends SubsystemBase {
         return hoodMotor.getPosition().getValue();
     }
 
-    public void setTargetAngle(double angle) {
+    public void setTargetAngle(Angle angle) {
         targetHoodAngle = angle;
     }
 
@@ -123,74 +117,5 @@ public class Shooter extends SubsystemBase {
         
         distance = (leftPass.getNorm() < rightPass.getNorm() ? leftPass : rightPass).getNorm();
     }
-    private void updateTargets(){
-        targetHoodAngle = SmartDashboard.getNumber("shooter/TargetAngle", targetHoodAngle);
-        targetShooterVelocity = SmartDashboard.getNumber("shooter/TargetShooterVelocity", targetShooterVelocity);
-    }
-    private void initSmartDashboardGains() {
-        cachedHoodKP = ShooterConstants.getHoodConfig().Slot0.kP;
-        cachedHoodKD = ShooterConstants.getHoodConfig().Slot0.kD;
-        cachedHoodKV = ShooterConstants.getHoodConfig().Slot0.kV;
-        cachedHoodKG = ShooterConstants.getHoodConfig().Slot0.kG;
 
-        SmartDashboard.putNumber("Hood/kP", cachedHoodKP);
-        SmartDashboard.putNumber("Hood/kD", cachedHoodKD);
-        SmartDashboard.putNumber("Hood/kV", cachedHoodKV);
-        SmartDashboard.putNumber("Hood/kG", cachedHoodKG);
-
-        cachedShooterKP = ShooterConstants.kP;
-        cachedShooterKD = ShooterConstants.kD;
-        cachedShooterKV = ShooterConstants.kV;
-        cachedShooterKS = ShooterConstants.kS;
-
-        SmartDashboard.putNumber("Shooter/kP", cachedShooterKP);
-        SmartDashboard.putNumber("Shooter/kS", cachedShooterKS);
-        SmartDashboard.putNumber("Shooter/kD", cachedShooterKD);
-        SmartDashboard.putNumber("Shooter/kV", cachedShooterKV);
-    }
-
-    private void updateSmartDashboardGains() {
-        double hoodKP = SmartDashboard.getNumber("Hood/kP", cachedHoodKP);
-        double hoodKD = SmartDashboard.getNumber("Hood/kD", cachedHoodKD);
-        double hoodKV = SmartDashboard.getNumber("Hood/kV", cachedHoodKV);
-        double hoodKG = SmartDashboard.getNumber("Hood/kG", cachedHoodKG);
-
-        if (hoodKP != cachedHoodKP  || hoodKD != cachedHoodKD
-                || hoodKV != cachedHoodKV || hoodKG != cachedHoodKG) {
-            cachedHoodKP = hoodKP;
-            cachedHoodKD = hoodKD;
-            cachedHoodKV = hoodKV;
-            cachedHoodKG = hoodKG;
-
-            Slot0Configs hoodGains = new Slot0Configs()
-                    .withKP(hoodKP)
-                    .withKD(hoodKD)
-                    .withKV(hoodKV)
-                    .withKG(hoodKG);
-            hoodMotor.getConfigurator().apply(hoodGains);
-        }
-
-        double shooterKP = SmartDashboard.getNumber("Shooter/kP", cachedShooterKP);
-        double shooterKD = SmartDashboard.getNumber("Shooter/kD", cachedShooterKD);
-        double shooterKV = SmartDashboard.getNumber("Shooter/kV", cachedShooterKV);
-        double shooterKS = SmartDashboard.getNumber("Shooter/kS", cachedShooterKS);
-
-        if (shooterKP != cachedShooterKP  || shooterKD != cachedShooterKD
-                || shooterKV != cachedShooterKV || shooterKS != cachedShooterKS) {
-            cachedShooterKP = shooterKP;
-            cachedShooterKD = shooterKD;
-            cachedShooterKV = shooterKV;
-            cachedShooterKS = shooterKS;
-
-            Slot0Configs hoodGains = new Slot0Configs()
-                    .withKP(shooterKP)
-                    .withKD(shooterKD)
-                    .withKV(shooterKV)
-                    .withKS(shooterKS);
-            shooterMotor1.getConfigurator().apply(hoodGains);
-            shooterMotor2.getConfigurator().apply(hoodGains);
-            shooterMotor3.getConfigurator().apply(hoodGains);
-            shooterMotor4.getConfigurator().apply(hoodGains);
-        }
-    }
 }
