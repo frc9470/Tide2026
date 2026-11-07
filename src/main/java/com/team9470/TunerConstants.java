@@ -153,7 +153,7 @@ public class TunerConstants {
         private static final int kFrontLeftDriveMotorId = 8;
         private static final int kFrontLeftSteerMotorId = 7;
         private static final int kFrontLeftEncoderId = 12;
-        private static final Angle kFrontLeftEncoderOffset = Rotations.of(0.48291015625 - 0.75);
+        private static final Angle kFrontLeftEncoderOffset = Rotations.of(0.48291015625 - 0.25);
         private static final boolean kFrontLeftSteerMotorInverted = false;
         private static final boolean kFrontLeftEncoderInverted = true;
         private static final Distance kFrontLeftXPos = Inches.of(9.4225);
@@ -201,7 +201,7 @@ public class TunerConstants {
         private static final int kBackRightDriveMotorId = 5;
         private static final int kBackRightSteerMotorId = 47;
         private static final int kBackRightEncoderId = 3;
-        private static final Angle kBackRightEncoderOffset = Rotations.of(0.239501953125 + 0.25);
+        private static final Angle kBackRightEncoderOffset = Rotations.of(0.239501953125 - 0.25);
         private static final boolean kBackRightSteerMotorInverted = false;
         private static final boolean kBackRightEncoderInverted = true;
         private static final Distance kBackRightXPos = Inches.of(-9.4225);
@@ -225,7 +225,7 @@ public class TunerConstants {
         public static Swerve createDrivetrain() {
                 return new Swerve(DrivetrainConstants,
                                 100, odometryStandardDeviation, visionStandardDeviation,
-                                FrontLeft, FrontRight, BackLeft, BackRight);
+                                 FrontRight, BackLeft);
  
         }
  

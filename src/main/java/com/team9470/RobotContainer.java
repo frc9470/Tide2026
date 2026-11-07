@@ -82,8 +82,8 @@ public class RobotContainer {
     SwerveRequest.SwerveDriveBrake xLock = new SwerveRequest.SwerveDriveBrake();
 
     swerve.setDefaultCommand(swerve.applyRequest(() -> drive
-        .withVelocityX(-driver.getLeftY() * maxSpeed)
-        .withVelocityY(driver.getLeftX() * maxSpeed)
+        .withVelocityX(-driver.getLeftX() * maxSpeed)
+        .withVelocityY(driver.getLeftY() * maxSpeed)
         .withRotationalRate(driver.getRightX() * maxAngularRate )));
     driver.x().whileTrue(swerve.applyRequest(() -> xLock));
     driver.back().and(DriverStation::isTestEnabled)

@@ -70,6 +70,8 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     private double cachedChoreoXYkP, cachedChoreoXYkI, cachedChoreoXYkD;
     private double cachedChoreoThetakP, cachedChoreoThetakI, cachedChoreoThetakD;
 
+    private double fLOffset, fROffset, bLOffset, bROffset;
+
     private static final double AUTO_PATH_SAMPLE_TIMEOUT_SEC = 0.25;
     private static final double AUTO_STARTUP_MOTION_THRESHOLD_MPS = 0.05;
     private static final double AUTO_STARTUP_OMEGA_THRESHOLD_RAD_PER_SEC = 0.10;
@@ -222,6 +224,15 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     private void initSmartDashboardGains() {
+        bLOffset = TunerConstants.BackLeft.EncoderOffset;
+        bROffset = TunerConstants.BackRight.EncoderOffset;
+        fLOffset = TunerConstants.FrontLeft.EncoderOffset;
+        fROffset = TunerConstants.FrontRight.EncoderOffset;
+        SmartDashboard.putNumber("Offsets/back_left", bLOffset);
+        SmartDashboard.putNumber("Offsets/back_right", bROffset);
+        SmartDashboard.putNumber("Offsets/front_left", fLOffset);
+        SmartDashboard.putNumber("Offsets/front_right", fROffset);
+        
         // Drive gains from TunerConstants
         cachedDriveKP = TunerConstants.driveGains.kP;
         cachedDriveKI = TunerConstants.driveGains.kI;
@@ -578,6 +589,17 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     private void updateSmartDashboardGains() {
+        double backLOffset = SmartDashboard.getNumber("Offsets/back_left", bLOffset);
+        double backROffset = SmartDashboard.getNumber("Offsets/back_right", bROffset);
+        double frontLOffset = SmartDashboard.getNumber("Offsets/front_left", bLOffset);
+        double frontROffset = SmartDashboard.getNumber("Offsets/front_right", bROffset);
+
+        if(backLOffset != bLOffset || backROffset != bROffset || frontLOffset != fLOffset || frontROffset != fROffset){
+            bLOffset = backLOffset;
+            bROffset = backROffset;
+            fLOffset = frontLOffset;
+            fROffset = frontROffset;
+        }
         // --- Drive gains ---
         double driveKP = SmartDashboard.getNumber("Drive/kP", cachedDriveKP);
         double driveKI = SmartDashboard.getNumber("Drive/kI", cachedDriveKI);
