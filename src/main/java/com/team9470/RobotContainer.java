@@ -99,19 +99,19 @@ public class RobotContainer {
 //     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
       
 // //Dye(testing)
-// dye.reverse();
-// new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
-//     .whileTrue(new RunCommand(() -> dye.feed(), dye))
-//     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
+dye.reverse();
+new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+    .whileTrue(new RunCommand(() -> dye.feed(), dye))
+    .onFalse(new InstantCommand(() -> dye.reverse(), dye));
 
-// intake.deploy();
-// // Intake
-// new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
-//     .whileTrue(new RunCommand(() -> intake.agitate(), intake))
-//     .onFalse(new InstantCommand(() -> intake.deploy(), intake));
+intake.deploy();
+// Intake
+new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
+     .whileTrue(new RunCommand(() -> intake.outtake(), intake))
+     .onFalse(new InstantCommand(() -> intake.deploy(), intake));
     
 // // //Shooter
-// shooter.setTargetVelocity(100);
+// shooter.setTargetVelocity(200);  
 // shooter.setTargetAngle(-30);
   }
 

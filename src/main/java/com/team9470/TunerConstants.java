@@ -156,8 +156,8 @@ public class TunerConstants {
         private static final Angle kFrontLeftEncoderOffset = Rotations.of(0.48291015625 - 0.25);
         private static final boolean kFrontLeftSteerMotorInverted = false;
         private static final boolean kFrontLeftEncoderInverted = true;
-        private static final Distance kFrontLeftXPos = Inches.of(9.4225);
-        private static final Distance kFrontLeftYPos = Inches.of(11.9385);
+        private static final Distance kFrontLeftXPos = Inches.of(-9.4225);
+        private static final Distance kFrontLeftYPos = Inches.of(-11.9385);
         public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> FrontLeft = ConstantCreator
                         .createModuleConstants(
                                         kFrontLeftSteerMotorId, kFrontLeftDriveMotorId, kFrontLeftEncoderId,
@@ -204,8 +204,8 @@ public class TunerConstants {
         private static final Angle kBackRightEncoderOffset = Rotations.of(0.239501953125 - 0.25);
         private static final boolean kBackRightSteerMotorInverted = false;
         private static final boolean kBackRightEncoderInverted = true;
-        private static final Distance kBackRightXPos = Inches.of(-9.4225);
-        private static final Distance kBackRightYPos = Inches.of(-11.9385);
+        private static final Distance kBackRightXPos = Inches.of(9.4225);
+        private static final Distance kBackRightYPos = Inches.of(11.9385);
         public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> BackRight = ConstantCreator
                         .createModuleConstants(
                                         kBackRightSteerMotorId, kBackRightDriveMotorId, kBackRightEncoderId,
@@ -225,7 +225,7 @@ public class TunerConstants {
         public static Swerve createDrivetrain() {
                 return new Swerve(DrivetrainConstants,
                                 100, odometryStandardDeviation, visionStandardDeviation,
-                                 FrontRight, BackLeft);
+                                 FrontRight, BackLeft,FrontLeft, BackRight);
  
         }
  

@@ -23,6 +23,7 @@ public class Intake extends SubsystemBase{
     public boolean deployed = false;
     public boolean agitating = false;
     public boolean rollersRunning = false;
+    public boolean reverse = false;
     private Timer timer = new Timer();
 
     public Intake() {
@@ -53,6 +54,10 @@ public class Intake extends SubsystemBase{
             rollerVolts = IntakeConstants.ROLLER_SPEED;
             kickerVolts = IntakeConstants.KICKER_SPEED;
         }
+        else if(reverse){
+            rollerVolts = -10;
+            kickerVolts = -6;
+        }
         else {
             rollerVolts = 0.0;
             kickerVolts = 0.0;
@@ -75,6 +80,7 @@ public class Intake extends SubsystemBase{
             intakePositionRequest.withPosition(IntakeConstants.LEFT_DEPLOYED_POSITION_ROTATIONS));
         deployed = true;
         agitating = false;
+        reverse = false;
     }
 
     public void stow() {
@@ -83,8 +89,18 @@ public class Intake extends SubsystemBase{
         leftIntakeMotor.setControl(intakePositionRequest.withPosition(IntakeConstants.STOWED_POSITION_ROTATIONS));
     }
 
+    public void outtake(){
+        rightIntakeMotor.setControl(
+        intakePositionRequest.withPosition(IntakeConstants.DEPLOYED_POSITION_ROTATIONS));
+        leftIntakeMotor.setControl(intakePositionRequest.withPosition(IntakeConstants.DEPLOYED_POSITION_ROTATIONS));
+        deployed = false;
+        agitating = false;
+        reverse = true;
+    }
+
     public void agitate(){
         timer.reset();
+        reverse = false;
         agitating = true;
         deployed = false;
     }
