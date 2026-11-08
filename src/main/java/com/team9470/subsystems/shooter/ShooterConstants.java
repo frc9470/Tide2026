@@ -16,7 +16,7 @@ public final class ShooterConstants {
     public static final double ACCELERATION = 15; 
     public static final double JERK = 0; 
 
-    public static final double kP = 100.0;
+    public static final double kP = 0.0;
     public static final double kD = 0.0;
     public static final double kS = 0.0;
     public static final double kV = 0.0;
@@ -42,7 +42,7 @@ public final class ShooterConstants {
         config.Slot0.kA = kA;
         config.Feedback.SensorToMechanismRatio = SHOOTER_GEAR_RATIO1;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        config.CurrentLimits.StatorCurrentLimitEnable = false;
         config.CurrentLimits.StatorCurrentLimit = 40;
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         return config;
@@ -60,7 +60,7 @@ public final class ShooterConstants {
         config.Slot0.kA = kA;
         config.Feedback.SensorToMechanismRatio = SHOOTER_GEAR_RATIO2;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        config.CurrentLimits.StatorCurrentLimitEnable = false;
         config.CurrentLimits.StatorCurrentLimit = 40;
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         return config;

@@ -75,15 +75,15 @@ public class RobotContainer {
   private void configureDriveBindings() {
     double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     double maxAngularRate = Math.toRadians(TunerConstants.maxAngularVelocity);
-    SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
+    SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
         .withDeadband(maxSpeed * 0.1)
         .withRotationalDeadband(maxAngularRate * 0.1)
         .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
     SwerveRequest.SwerveDriveBrake xLock = new SwerveRequest.SwerveDriveBrake();
 
     swerve.setDefaultCommand(swerve.applyRequest(() -> drive
-        .withVelocityX(-driver.getLeftX() * maxSpeed)
-        .withVelocityY(driver.getLeftY() * maxSpeed)
+        .withVelocityX(-driver.getLeftX() * maxSpeed )
+        .withVelocityY(-driver.getLeftY() * maxSpeed )
         .withRotationalRate(driver.getRightX() * maxAngularRate )));
     driver.x().whileTrue(swerve.applyRequest(() -> xLock));
     driver.back().and(DriverStation::isTestEnabled)
@@ -99,10 +99,10 @@ public class RobotContainer {
 //     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
       
 // //Dye(testing)
-// dye.reverse();
-// new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
-//     .whileTrue(new RunCommand(() -> dye.feed(), dye))
-//     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
+ dye.reverse();
+new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+    .whileTrue(new RunCommand(() -> dye.feed(), dye))
+    .onFalse(new InstantCommand(() -> dye.reverse(), dye));
 
 // intake.deploy();
 // // Intake
@@ -111,7 +111,7 @@ public class RobotContainer {
 //      .onFalse(new InstantCommand(() -> intake.deploy(), intake));
     
 // // //Shooter
-shooter.setTargetVelocity(50);  
+//shooter.setTargetVelocity(80);  
 // shooter.setTargetAngle(-30);
   }
 

@@ -87,7 +87,7 @@ public class TunerConstants {
                                                         .withStatorCurrentLimitEnable(true));
         private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
         // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
-        private static final Pigeon2Configuration pigeonConfigs = null;
+        private static final Pigeon2Configuration pigeonConfigs = new Pigeon2Configuration();
 
         // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns.
         // CTRE defines this as the inverse of the 1st drive stage. For SDS MK5n R1
@@ -102,10 +102,14 @@ public class TunerConstants {
         private static final boolean kInvertLeftSide = false;
         private static final boolean kInvertRightSide = true;
  
+        static{
+                pigeonConfigs.MountPose.MountPoseRoll = 180;
+        }
         private static final int kPigeonId = 9;
         public static final SwerveDrivetrainConstants DrivetrainConstants = new SwerveDrivetrainConstants()
-                        .withCANBusName(kCANBus.getName());
-        // These are only used for simulation
+                        .withCANBusName(kCANBus.getName())
+                        .withPigeon2Configs(pigeonConfigs)
+                        .withPigeon2Id(kPigeonId);  // These are only used for simulation
         private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.01);
         private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.035);
         // Simulated voltage necessary to overcome friction
