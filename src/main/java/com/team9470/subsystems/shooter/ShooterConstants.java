@@ -16,7 +16,7 @@ public final class ShooterConstants {
     public static final double ACCELERATION = 15; 
     public static final double JERK = 0; 
 
-    public static final double kP = 0.0;
+    public static final double kP = 100.0;
     public static final double kD = 0.0;
     public static final double kS = 0.0;
     public static final double kV = 0.0;
@@ -27,17 +27,21 @@ public final class ShooterConstants {
     public static final double hoodkG = 0;
     public static final double hoodkS = 0.0;
 
+    private static final double kHoodStatorCurrentLimit = 40.0;
+    private static final double kShooterStatorCurrentLimit = 40.0;
+
     //hood homing
-    public static Angle kHome;
+    public static double kHome = 0.0;
     public static double kHomingVoltage = -3.0;
     public static double kStallCurrent = 20.0;
     public static double kStallVelocity = 2.0;
-    public static double kStallTime = 0.2;
+    public static double kStallTime = 0.1;
 
 
     public static final double SHOOTER_GEAR_RATIO1 = 20.0 / 36.0; 
     public static final double SHOOTER_GEAR_RATIO2 = 1;
     public static final double HOOD_GEAR_RATIO = (8.0 / 24.0) * (24.0 / 20.0) * (1.0 / 50.0); 
+    public static final double HODD_ANGLE_GEAR_RATIO = (HOOD_GEAR_RATIO)*360/50;
     public static TalonFXConfiguration getFrontShooterConfig() {
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY;
@@ -50,7 +54,7 @@ public final class ShooterConstants {
         config.Slot0.kA = kA;
         config.Feedback.SensorToMechanismRatio = SHOOTER_GEAR_RATIO1;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        config.CurrentLimits.StatorCurrentLimitEnable = false;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.StatorCurrentLimit = 40;
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         return config;
@@ -68,8 +72,8 @@ public final class ShooterConstants {
         config.Slot0.kA = kA;
         config.Feedback.SensorToMechanismRatio = SHOOTER_GEAR_RATIO2;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        config.CurrentLimits.StatorCurrentLimitEnable = false;
-        config.CurrentLimits.StatorCurrentLimit = 40;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        config.CurrentLimits.StatorCurrentLimit = kShooterStatorCurrentLimit;
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         return config;
     }
@@ -86,7 +90,7 @@ public final class ShooterConstants {
         config.Feedback.SensorToMechanismRatio = HOOD_GEAR_RATIO;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.StatorCurrentLimit = 40;
+        config.CurrentLimits.StatorCurrentLimit = kHoodStatorCurrentLimit;
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         return config;
     }

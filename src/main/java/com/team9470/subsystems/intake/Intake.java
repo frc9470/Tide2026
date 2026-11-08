@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase{
-
+    
     private final TalonFX rightRollerMotor;
     private final TalonFX leftRollerMotor;
     private final TalonFX rightIntakeMotor;
@@ -64,7 +64,7 @@ public class Intake extends SubsystemBase{
         //homing
         if(homing){
             rightIntakeMotor.setVoltage(IntakeConstants.kHomingVoltage);
-            boolean stalled = IntakeConstants.kStallCurrent >= rightIntakeMotor.getStatorCurrent().getValueAsDouble()
+            boolean stalled = IntakeConstants.kStallCurrent =< rightIntakeMotor.getStatorCurrent().getValueAsDouble()
                 && IntakeConstants.kStallVelocity >= rightIntakeMotor.getVelocity().getValueAsDouble();
             double now = Timer.getFPGATimestamp();
             if(homingStallStart == Double.NaN){

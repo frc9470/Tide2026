@@ -63,7 +63,7 @@ public class Shooter extends SubsystemBase {
         //homing
         if(homing){
             hoodMotor.setVoltage(ShooterConstants.kHomingVoltage);
-            boolean stalled = ShooterConstants.kStallCurrent >= hoodMotor.getStatorCurrent().getValueAsDouble()
+            boolean stalled = ShooterConstants.kStallCurrent <= hoodMotor.getStatorCurrent().getValueAsDouble()
                 && ShooterConstants.kStallVelocity >= hoodMotor.getVelocity().getValueAsDouble();
             double now = Timer.getFPGATimestamp();
             if(homingStallStart == Double.NaN){
@@ -98,6 +98,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter/TargetShooterVelocity", targetShooterVelocity);
         SmartDashboard.putNumber("Shooter/ShooterError", targetShooterVelocity-getVelocity());
     }
+
     public Angle getAngle() {
         return hoodMotor.getPosition().getValue();
     }
@@ -147,6 +148,7 @@ public class Shooter extends SubsystemBase {
         velocityVector.times(TurretConstants.tof);
         distance = offset.minus(velocityVector).getNorm();
     }
+
     private void calculateTargetPass() {
         
         Pose2d robotPose = poseSlave.getPose();
