@@ -27,6 +27,14 @@ public final class ShooterConstants {
     public static final double hoodkG = 0;
     public static final double hoodkS = 0.0;
 
+    //hood homing
+    public static Angle kHome;
+    public static double kHomingVoltage = -3.0;
+    public static double kStallCurrent = 20.0;
+    public static double kStallVelocity = 2.0;
+    public static double kStallTime = 0.2;
+
+
     public static final double SHOOTER_GEAR_RATIO1 = 20.0 / 36.0; 
     public static final double SHOOTER_GEAR_RATIO2 = 1;
     public static final double HOOD_GEAR_RATIO = (8.0 / 24.0) * (24.0 / 20.0) * (1.0 / 50.0); 

@@ -1,6 +1,7 @@
 package com.team9470.subsystems.intake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -18,23 +19,30 @@ public class IntakeConstants {
     public static final double kIntakeStatorCurrentLimit = 40.0;
     public static final double kIntakeSupplyCurrentLimit = 40.0;
 
-    public static final double kRollerStatorCurrentLimit = 40;
-    public static final double kRollerSupplyCurrentLimit = 40;
+    public static final double kRollerStatorCurrentLimit = 40.0;
+    public static final double kRollerSupplyCurrentLimit = 40.0;
 
-    public static final double kKickerStatorCurrentLimit = 40;
-    public static final double kKickerSupplyCurrentLimit = 40;
+    public static final double kKickerStatorCurrentLimit = 40.0;
+    public static final double kKickerSupplyCurrentLimit = 40.0;
 
+    //homing constants
+    public static final double kHomingVoltage = -3.0;
+    public static final double kStallCurrent = 20.0;
+    public static final double kStallVelocity = 0.1;
+    public static final double kStallTime = 0.05;
+    public static final double kHome = 0.0;
 
     public static final double ROLLER_SPEED = 10;
 
-    public static final double DEPLOYED_POSITION_ROTATIONS = -12;
-    public static final double LEFT_DEPLOYED_POSITION_ROTATIONS = -12;
-    public static final double STOWED_POSITION_ROTATIONS = -10;
+    public static final double DEPLOYED_POSITION_ROTATIONS = -12.0;
+    public static final double AGITATE_POSITION_ROTATIONS = -10.0;
 
     public static final double KICKER_SPEED = 6;
+
     public static final int kS = 0;
     public static final int kV = 0;
     public static final int kP = 2;
+
     public static TalonFXConfiguration getConfig() {
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.Slot0.kS = kS;
