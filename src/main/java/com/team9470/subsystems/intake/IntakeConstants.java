@@ -26,9 +26,9 @@ public class IntakeConstants {
     public static final double kKickerSupplyCurrentLimit = 40.0;
 
     //homing constants
-    public static final double kHomingVoltage = -3.0;
+    public static final double kHomingVoltage = 3.0;
     public static final double kStallCurrent = 20.0;
-    public static final double kStallVelocity = 0.1;
+    public static final double kStallVelocity = 0.7;
     public static final double kStallTime = 0.05;
     public static final double kHome = 0.0;
 

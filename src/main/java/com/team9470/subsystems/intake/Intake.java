@@ -105,7 +105,7 @@ public class Intake extends SubsystemBase{
         }
         else if (agitating) {
             if(timer.get() % 1.0 <= 0.5){
-                intakeTargetPosition = IntakeConstants.AGITATE_POSITION_ROTATIONS;
+                intakeTargetPosition = IntakeConstants.STOWED_POSITION_ROTATIONS;
             }
             else{
                 intakeTargetPosition = IntakeConstants.DEPLOYED_POSITION_ROTATIONS;

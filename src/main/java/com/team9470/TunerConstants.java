@@ -104,6 +104,7 @@ public class TunerConstants {
  
         static{
                 pigeonConfigs.MountPose.MountPoseRoll = 180;
+                pigeonConfigs.MountPose.MountPoseYaw = 180;
         }
         private static final int kPigeonId = 9;
         public static final SwerveDrivetrainConstants DrivetrainConstants = new SwerveDrivetrainConstants()

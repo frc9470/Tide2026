@@ -75,7 +75,7 @@ public class RobotContainer {
   private void configureDriveBindings() {
     double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     double maxAngularRate = Math.toRadians(TunerConstants.maxAngularVelocity);
-    SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+    SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
         .withDeadband(maxSpeed * 0.1)
         .withRotationalDeadband(maxAngularRate * 0.1)
         .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
@@ -86,10 +86,11 @@ public class RobotContainer {
         .withVelocityY(-driver.getLeftY() * maxSpeed )
         .withRotationalRate(driver.getRightX() * maxAngularRate )));
     driver.x().whileTrue(swerve.applyRequest(() -> xLock));
+    driver.rightStick().onTrue(Commands.runOnce(swerve::seedFieldCentric, swerve));
     driver.back().and(DriverStation::isTestEnabled)
         .whileTrue(new WheelRadiusCharacterization(swerve));
 
-    driver.rightStick().onTrue(shooter.getHomeHoodCommand());
+    //driver.rightStick().onTrue(shooter.getHomeHoodCommand());
 //autoaim
 //  new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
 //    .whileTrue(new RunCommand(() -> swerve.targetAngle(-driver.getLeftY() * maxSpeed * TurretConstants.speedCap,-driver.getLeftX() * maxSpeed * TurretConstants.speedCap,Turret.calculateTarget()), swerve));
