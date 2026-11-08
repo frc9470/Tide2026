@@ -1,5 +1,6 @@
 package com.team9470.subsystems.shooter;
 
+import com.ctre.phoenix6.Timestamp;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -15,7 +16,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static edu.wpi.first.units.Units.*;
@@ -34,7 +37,10 @@ public class Shooter extends SubsystemBase {
     private double distance = 0;
     private Swerve poseSlave;
     public boolean targetHub = true;
-    
+
+    private boolean homing = true;
+    private double homingStallStart = Double.NaN;
+
     public Shooter(Swerve swerve) {
         poseSlave = swerve;
         hoodMotor = TalonFXFactory.createDefaultTalon(Ports.HOOD_MOTOR);
@@ -52,6 +58,27 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+
+        //homing
+        if(homing){
+            hoodMotor.setVoltage(ShooterConstants.kHomingVoltage);
+            boolean stalled = ShooterConstants.kStallCurrent >= hoodMotor.getStatorCurrent().getValueAsDouble()
+                && ShooterConstants.kStallVelocity >= hoodMotor.getVelocity().getValueAsDouble();
+            double now = Timer.getFPGATimestamp();
+            if(homingStallStart == Double.NaN){
+                homingStallStart = now;
+            }
+            else if(stalled && now - homingStallStart > ShooterConstants.kStallTime){
+                hoodMotor.setPosition(ShooterConstants.kHome);
+                hoodMotor.setControl(hoodMotionMagic.withPosition(targetHoodAngle));
+                homing = false;
+            }
+            else{
+                homingStallStart = Double.NaN;
+            }
+        }
+
         calculateTargetMain();
         //targetHoodAngle = Units.Rotations.of(MathUtil.clamp(targetHoodAngle.in(Rotations), ShooterConstants.lowerLimit.in(Rotations), ShooterConstants.upperLimit.in(Rotations)));
         //targetVelocity = controller.calculate(getAngle().in(Rotations), targetAngle.in(Rotations));
@@ -65,10 +92,11 @@ public class Shooter extends SubsystemBase {
         shooterMotor4.setControl(motionMagic.withVelocity(targetShooterVelocity));
 
         hoodMotor.setControl(hoodMotionMagic.withPosition(targetHoodAngle));
-        SmartDashboard.putNumber("shooter/TargetAngle", targetHoodAngle.in(Degrees));
-        SmartDashboard.putNumber("shooter/Error", targetHoodAngle.in(Degrees)-getAngle().in(Degrees));
-        SmartDashboard.putNumber("shooter/TargetShooterVelocity", targetShooterVelocity);
-        SmartDashboard.putNumber("shooter/ShooterError", targetShooterVelocity-getVelocity());
+
+        SmartDashboard.putNumber("Shooter/TargetAngle", targetHoodAngle.in(Degrees));
+        SmartDashboard.putNumber("Shooter/Error", targetHoodAngle.in(Degrees)-getAngle().in(Degrees));
+        SmartDashboard.putNumber("Shooter/TargetShooterVelocity", targetShooterVelocity);
+        SmartDashboard.putNumber("Shooter/ShooterError", targetShooterVelocity-getVelocity());
     }
     public Angle getAngle() {
         return hoodMotor.getPosition().getValue();
@@ -85,6 +113,17 @@ public class Shooter extends SubsystemBase {
     public void setTargetVelocity(double velocity) {
         targetShooterVelocity = velocity;
     }
+
+    private void hoodHome(){
+        homing = true;
+    }
+
+    public Command getHomeHoodCommand(){
+        return this.runOnce(
+            () -> hoodHome()
+        );
+    }
+
     private void calculateTargetMain(){
         if(targetHub) calculateTargetHub();
         else calculateTargetPass();
@@ -117,5 +156,4 @@ public class Shooter extends SubsystemBase {
         
         distance = (leftPass.getNorm() < rightPass.getNorm() ? leftPass : rightPass).getNorm();
     }
-
 }

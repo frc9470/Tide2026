@@ -89,6 +89,7 @@ public class RobotContainer {
     driver.back().and(DriverStation::isTestEnabled)
         .whileTrue(new WheelRadiusCharacterization(swerve));
 
+    driver.rightStick().onTrue(shooter.getHomeHoodCommand());
 //autoaim
 //  new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
 //    .whileTrue(new RunCommand(() -> swerve.targetAngle(-driver.getLeftY() * maxSpeed * TurretConstants.speedCap,-driver.getLeftX() * maxSpeed * TurretConstants.speedCap,Turret.calculateTarget()), swerve));

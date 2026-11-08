@@ -36,13 +36,14 @@
     {"x":{"exp":"15.95 m", "val":15.95}, "y":{"exp":"2.1 m", "val":2.1}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":18, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"14.9 m", "val":14.9}, "y":{"exp":"0.8 m", "val":0.8}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":23, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"12 m", "val":12.0}, "y":{"exp":"0.64 m", "val":0.64}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":22, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"9.4 m", "val":9.4}, "y":{"exp":"0.95 m", "val":0.95}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":25, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+    {"x":{"exp":"9.4 m", "val":9.4}, "y":{"exp":"0.95 m", "val":0.95}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":25, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"6.851241588592529 m", "val":6.851241588592529}, "y":{"exp":"2.9467127323150635 m", "val":2.9467127323150635}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":16, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"6.672990322113037 m", "val":6.672990322113037}, "y":{"exp":"1.6303930282592773 m", "val":1.6303930282592771}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":7, "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
-    {"from":8, "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
-    {"from":"first", "to":"last", "data":{"type":"KeepInRectangle", "props":{"x":{"exp":"8.3205 m", "val":8.3205}, "y":{"exp":"0.05 m", "val":0.05}, "w":{"exp":"8.2205 m", "val":8.2205}, "h":{"exp":"7.9692 m", "val":7.9692}}}, "enabled":true}],
+    {"from":8, "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true}],
   "targetDt":{
    "exp":"0.05 s",
    "val":0.05
