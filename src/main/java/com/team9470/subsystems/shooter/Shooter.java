@@ -8,6 +8,8 @@ import com.team254.lib.drivers.TalonUtil;
 import com.team9470.FieldConstants;
 import com.team9470.Ports;
 import com.team9470.subsystems.swerve.Swerve;
+import com.team9470.subsystems.turret.Turret;
+import com.team9470.subsystems.turret.TurretConstants;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static edu.wpi.first.units.Units.*;
 
 /**
- * Shooter (4 flywheel motors + hood, NO turret) with SHOOT ON THE MOVE.
+ * Shooter (4 flywheel motors + hood) with a TURRET and SHOOT ON THE MOVE.
  *
  * <p><b>The idea.</b> A ball leaves the shooter with the robot's own velocity added to it. If the
  * robot drives at 2 m/s and the ball is in the air for 1 s, the ball lands 2 m off to the side
@@ -46,16 +48,21 @@ import static edu.wpi.first.units.Units.*;
  *   <li>Runs the flywheel and hood to those targets (when {@link #autoAim} is true).</li>
  * </ol>
  *
- * <p><b>No turret: the ROBOT aims.</b> The shooter is fixed to the robot and shoots out the back
- * ({@link #SHOOTER_FACING_DEGREES}). So the drivetrain has to turn the robot until the shooter side
- * points at {@link #aimPoint}. {@link #getTargetHeading()} is the field heading the robot should
- * have for that, and {@link #getAimErrorRadians()} is how far off it is right now. Feed this to the
- * drivetrain's heading controller (the auto does this while it drives). On the move the target
- * heading keeps changing, so the robot keeps turning as it drives past the hub.
+ * <p><b>The TURRET aims.</b> Every loop this class works out the turret angle that points the
+ * shooter at {@link #aimPoint} and writes it to {@code Turret.targetAngle} (Turret.periodic() then
+ * drives the turret there). The robot itself can face any way and keep driving its path; the turret
+ * makes up the difference, including while the robot turns. The angle is relative to the turret's
+ * zero ({@link #TURRET_ZERO_FACING_DEGREES}), kept inside the turret's travel
+ * (TurretConstants.upperLimit / lowerLimit), and picks the way around that is closest to where the
+ * turret already is, so it doesn't swing the long way.
+ *
+ * <p>If the Shooter is created without a turret ({@code new Shooter(swerve)}), it falls back to the
+ * old no-turret mode: the shooter is fixed facing {@link #SHOOTER_FACING_DEGREES} and
+ * {@link #getTargetHeading()} is the robot heading to drive to.
  *
  * <p><b>Feeding.</b> Only feed balls when {@link #isReadyToShoot()} is true: flywheel at speed,
- * hood on target, robot pointed at the aim point, robot not driving too fast, and the aim point in
- * the range the tables cover.
+ * hood on target, turret on target ({@link #isAimed()}), robot not driving too fast, and the aim
+ * point in the range the tables cover.
  *
  * <p><b>Works on red and blue.</b> FieldConstants only has blue-side positions, so red positions are
  * the blue ones rotated around the field center.
@@ -82,13 +89,28 @@ public class Shooter extends SubsystemBase {
      */
     public static Translation2d aimPoint = new Translation2d();
 
-    /** Field heading the robot should have so the shooter points at {@link #aimPoint}. */
+    /** No-turret mode only: field heading the robot should have so the shooter points at {@link #aimPoint}. */
     private static Rotation2d targetHeading = new Rotation2d();
 
-    /** targetHeading minus the robot's current heading, -pi..pi radians (positive = turn CCW). */
+    /**
+     * How far off the aim is right now, -pi..pi radians. With a turret: turret target minus turret
+     * position. Without: targetHeading minus the robot's heading (positive = turn CCW).
+     */
     private static double aimErrorRadians = 0.0;
 
+    /** Turret angle (degrees, turret's own zero, inside its travel) that points the shooter at the aim point. */
+    private double turretTargetDegrees = 0.0;
+
     private final Swerve poseSlave;
+
+    /** The turret, or null if this robot has none (then the robot itself has to aim). */
+    private final Turret turret;
+
+    /**
+     * true = this class sets Turret.targetAngle every loop to point at the aim point. Set false if
+     * something else should control the turret (for example, testing it by hand).
+     */
+    public boolean controlTurret = true;
 
     /** true = shoot into our hub, false = pass to the nearest of our depot / outpost. */
     public boolean targetHub = true;
@@ -106,24 +128,33 @@ public class Shooter extends SubsystemBase {
      */
     public boolean shootOnTheMove = true;
 
-    // ---- Where the shooter is on the robot (no turret) ----
+    // ---- Where the shooter / turret is on the robot ----
 
     /**
-     * Direction the shooter shoots, relative to the FRONT of the robot (the intake side), counter-
-     * clockwise positive. 180 = out the back, 0 = out the front, 90 = left, -90 = right.
+     * TURRET: the direction the shooter points when the turret is at angle 0, relative to the FRONT
+     * of the robot (the intake side), counter-clockwise positive. 0 = turret zero points out the
+     * front (what Turret.calculateTargetHub() assumes), 180 = out the back. CHECK THIS ON THE ROBOT:
+     * command the turret to 0 and see which way the shooter points. Turret angles are assumed to
+     * increase counter-clockwise (seen from above), like the robot's heading.
+     */
+    public static final double TURRET_ZERO_FACING_DEGREES = 0.0;
+
+    /**
+     * NO-TURRET fallback only: direction the fixed shooter shoots, relative to the front of the
+     * robot, counter-clockwise positive. 180 = out the back.
      */
     public static final double SHOOTER_FACING_DEGREES = 180.0;
 
     /**
-     * Where the ball leaves the robot, relative to the robot's center, in meters (x = forward,
-     * y = left). Out the back about 0.25 m would be (-0.25, 0). Measure it on your robot. With the
-     * shooter off-center, turning the robot also moves the shooter, and the math accounts for it.
+     * Where the ball leaves the robot (the turret's center), relative to the robot's center, in
+     * meters (x = forward, y = left). Measure it on your robot. With the turret off-center, turning
+     * the robot also moves it, and the math accounts for that.
      */
     private static final Translation2d SHOOTER_OFFSET_METERS = new Translation2d(0.0, 0.0);
 
     /**
-     * The robot counts as aimed when the shooter points within this many degrees of the aim point.
-     * At 4.5 m, 2.5 degrees is about 0.2 m sideways; the hub opening is about 1 m wide.
+     * Counts as aimed when the turret (or, without a turret, the robot) is within this many degrees
+     * of the aim angle. At 4.5 m, 2.5 degrees is about 0.2 m sideways; the hub opening is ~1 m wide.
      */
     private static final double AIM_TOLERANCE_DEGREES = 2.5;
 
@@ -212,8 +243,15 @@ public class Shooter extends SubsystemBase {
     private double timeOfFlight = 0;
     private double robotSpeed = 0;
 
+    /** Shooter without a turret: the robot has to turn to aim (see {@link #getTargetHeading()}). */
     public Shooter(Swerve swerve) {
+        this(swerve, null);
+    }
+
+    /** Shooter with a turret: this class aims the turret at the aim point every loop. */
+    public Shooter(Swerve swerve, Turret turret) {
         poseSlave = swerve;
+        this.turret = turret;
         hoodMotor = TalonFXFactory.createDefaultTalon(Ports.HOOD_MOTOR);
         shooterMotor1 = TalonFXFactory.createDefaultTalon(Ports.SHOOTER_MOTOR1);
         shooterMotor2 = TalonFXFactory.createDefaultTalon(Ports.SHOOTER_MOTOR2);
@@ -235,6 +273,9 @@ public class Shooter extends SubsystemBase {
             setTargetVelocity(calculateVelocity());
             setTargetAngle(calculateHoodAngle());
         }
+        if (turret != null && controlTurret) {
+            Turret.targetAngle = Degrees.of(turretTargetDegrees);
+        }
 
         shooterMotor1.setControl(motionMagic.withVelocity(targetShooterVelocity));
         shooterMotor2.setControl(motionMagic.withVelocity(targetShooterVelocity));
@@ -252,6 +293,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("shooter/AimPointX", aimPoint.getX());
         SmartDashboard.putNumber("shooter/AimPointY", aimPoint.getY());
         SmartDashboard.putNumber("shooter/TargetHeadingDegrees", targetHeading.getDegrees());
+        SmartDashboard.putNumber("shooter/TurretTargetDegrees", turretTargetDegrees);
         SmartDashboard.putNumber("shooter/AimErrorDegrees", Math.toDegrees(aimErrorRadians));
         SmartDashboard.putBoolean("shooter/Aimed", isAimed());
         SmartDashboard.putBoolean("shooter/ReadyToShoot", isReadyToShoot());
@@ -275,20 +317,36 @@ public class Shooter extends SubsystemBase {
         targetShooterVelocity = velocity;
     }
 
+    /** True if this Shooter has a turret (it aims with the turret, not by turning the robot). */
+    public boolean hasTurret() {
+        return turret != null;
+    }
+
+    /** Turret angle (degrees from the turret's zero) that points the shooter at the aim point. */
+    public double getTurretTargetDegrees() {
+        return turretTargetDegrees;
+    }
+
     /**
-     * Field heading the robot should have so the shooter (out the back) points at the aim point.
-     * Give this to the drivetrain's heading controller.
+     * NO-TURRET mode: field heading the robot should have so the fixed shooter points at the aim
+     * point. Give this to the drivetrain's heading controller. (With a turret you don't need it.)
      */
     public Rotation2d getTargetHeading() {
         return targetHeading;
     }
 
-    /** How far the robot is from {@link #getTargetHeading()}, -pi..pi radians. Positive = turn CCW. */
+    /**
+     * How far off the aim is, -pi..pi radians: turret target minus turret position with a turret,
+     * or robot heading error without one (positive = turn CCW).
+     */
     public double getAimErrorRadians() {
         return aimErrorRadians;
     }
 
-    /** True when the shooter points at the aim point within {@link #AIM_TOLERANCE_DEGREES}. */
+    /**
+     * True when the shooter points at the aim point within {@link #AIM_TOLERANCE_DEGREES}: the
+     * turret has reached its target (with a turret), or the robot is facing the right way (without).
+     */
     public boolean isAimed() {
         return Math.abs(aimErrorRadians) <= Math.toRadians(AIM_TOLERANCE_DEGREES);
     }
@@ -299,8 +357,8 @@ public class Shooter extends SubsystemBase {
     }
 
     /**
-     * True when a ball fed now should go in: flywheel at speed, hood on target, robot pointed at the
-     * aim point ({@link #isAimed()}), robot slower than {@link #MAX_SHOOT_SPEED_MPS}, and the aim
+     * True when a ball fed now should go in: flywheel at speed, hood on target, turret (or robot)
+     * pointed at the aim point ({@link #isAimed()}), robot slower than {@link #MAX_SHOOT_SPEED_MPS}, and the aim
      * point inside the range the shot tables cover. (It does not check the alliance zone rule.)
      */
     public boolean isReadyToShoot() {
@@ -344,8 +402,8 @@ public class Shooter extends SubsystemBase {
 
     /**
      * The shoot-on-the-move math. Finds the aim point for {@code target} and stores it in
-     * {@link #aimPoint}, {@link #distance}, {@link #timeOfFlight}, {@link #targetHeading} and
-     * {@link #aimErrorRadians}.
+     * {@link #aimPoint}, {@link #distance}, {@link #timeOfFlight}, {@link #turretTargetDegrees},
+     * {@link #targetHeading} and {@link #aimErrorRadians}.
      */
     private void aimAt(Translation2d target, InterpolatingDoubleTreeMap timeOfFlightTable) {
         Pose2d pose = poseSlave.getPose();
@@ -377,9 +435,48 @@ public class Shooter extends SubsystemBase {
         aimPoint = aim;
         distance = shotFrom.getDistance(aim);
         timeOfFlight = timeOfFlightTable.get(distance);
-        // No turret: point the robot so the shooter side faces the aim point.
-        targetHeading = aim.minus(shotFrom).getAngle().minus(Rotation2d.fromDegrees(SHOOTER_FACING_DEGREES));
-        aimErrorRadians = MathUtil.angleModulus(targetHeading.getRadians() - pose.getRotation().getRadians());
+        Rotation2d fieldAngleToAim = aim.minus(shotFrom).getAngle();
+
+        // No-turret mode: point the robot so the fixed shooter faces the aim point.
+        targetHeading = fieldAngleToAim.minus(Rotation2d.fromDegrees(SHOOTER_FACING_DEGREES));
+
+        if (turret != null) {
+            // Turret: angle to the aim point relative to the robot, from the heading the robot will
+            // have when the ball leaves (it may be turning), measured from the turret's zero.
+            double headingAtRelease = pose.getRotation().getRadians() + omega * RELEASE_DELAY_SECONDS;
+            double wanted = Math.toDegrees(MathUtil.angleModulus(
+                    fieldAngleToAim.getRadians() - headingAtRelease
+                            - Math.toRadians(TURRET_ZERO_FACING_DEGREES)));
+            turretTargetDegrees = closestReachableTurretAngle(wanted, Turret.getAngle().in(Degrees));
+            aimErrorRadians = Math.toRadians(turretTargetDegrees - Turret.getAngle().in(Degrees));
+        } else {
+            aimErrorRadians = MathUtil.angleModulus(targetHeading.getRadians() - pose.getRotation().getRadians());
+        }
+    }
+
+    /**
+     * The turret can only turn between TurretConstants.upperLimit and lowerLimit. Of all the angles
+     * that point the same way ({@code wantedDegrees} + any multiple of 360), returns the one inside
+     * that range closest to where the turret is now, so it never swings the long way or past a
+     * limit. If none fits (a turret with less than 360 degrees of travel), it returns the nearest
+     * limit, and {@link #isAimed()} stays false until the robot turns enough.
+     */
+    private static double closestReachableTurretAngle(double wantedDegrees, double currentDegrees) {
+        double min = Math.min(TurretConstants.upperLimit.in(Degrees), TurretConstants.lowerLimit.in(Degrees));
+        double max = Math.max(TurretConstants.upperLimit.in(Degrees), TurretConstants.lowerLimit.in(Degrees));
+        double best = Double.NaN;
+        for (int k = -2; k <= 2; k++) {
+            double candidate = wantedDegrees + 360.0 * k;
+            if (candidate >= min && candidate <= max
+                    && (Double.isNaN(best) || Math.abs(candidate - currentDegrees) < Math.abs(best - currentDegrees))) {
+                best = candidate;
+            }
+        }
+        if (Double.isNaN(best)) {
+            double wrapped = currentDegrees + Math.IEEEremainder(wantedDegrees - currentDegrees, 360.0);
+            best = MathUtil.clamp(wrapped, min, max);
+        }
+        return best;
     }
 
     /** Our alliance's hub. FieldConstants.Hub.topCenterPoint is the BLUE hub. */
