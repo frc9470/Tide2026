@@ -35,7 +35,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
   private Swerve swerve;
   private Intake intake;
-  //privae Turret turret;
+  private Turret turret;
   private Shooter shooter;
   //private Limelight limelight;
   private Dye dye;
@@ -55,8 +55,9 @@ public class RobotContainer {
     
     //limelight = new Limelight();
     swerve = Swerve.getInstance();
-    shooter = new Shooter(swerve);
-    //turret = new Turret(swerve);
+    turret = new Turret(swerve);
+    // The Shooter aims the turret at the (shoot-on-the-move) aim point every loop.
+    shooter = new Shooter(swerve, turret);
     dye = new Dye();
 
     if (HardwareConfig.VISION_VERIFIED) {
@@ -67,8 +68,8 @@ public class RobotContainer {
   }
 
   private void configureAutos() {
-    // Tide Auto: no turret, the robot turns so the shooter (out the back) faces the hub and
-    // shoots on the move after the bump. The Shooter sets its own flywheel speed and hood.
+    // Tide Auto: shoots on the move after the bump; the Shooter aims the turret and sets its own
+    // flywheel speed and hood.
     AutoFactory autoFactory = swerve.createAutoFactory();
     autoChooser.addOption("Tide Auto",
         TideAutoRoutine.build(autoFactory, swerve, intake, dye, shooter));
@@ -92,8 +93,11 @@ public class RobotContainer {
         .whileTrue(new WheelRadiusCharacterization(swerve));
 
 //autoaim
- new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
-   .whileTrue(new RunCommand(() -> swerve.targetAngle(-driver.getLeftY() * maxSpeed * TurretConstants.speedCap,-driver.getLeftX() * maxSpeed * TurretConstants.speedCap,Turret.calculateTarget()), swerve));
+// Off now that the turret aims: the Shooter points the turret at the aim point all the time, so
+// the driver keeps full control of driving and turning. (This old version also turned the robot
+// toward the wrong heading.)
+// new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+//   .whileTrue(new RunCommand(() -> swerve.targetAngle(-driver.getLeftY() * maxSpeed * TurretConstants.speedCap,-driver.getLeftX() * maxSpeed * TurretConstants.speedCap,Turret.calculateTarget()), swerve));
 
       
 //Dye
