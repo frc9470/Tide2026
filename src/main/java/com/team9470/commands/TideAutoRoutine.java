@@ -25,8 +25,12 @@ import java.util.function.DoubleSupplier;
 
 /**
  * "Tide Auto": a single-sweep + depot auto (the same plan 4414 runs, without the hub slam), with
- * SHOOT ON THE MOVE and NO TURRET. The shooter is fixed to the robot and shoots out the back, so
- * the robot turns its back toward the Shooter's aim point to aim, while it keeps driving.
+ * SHOOT ON THE MOVE and a TURRET. The Shooter aims the turret at its aim point every loop, so the
+ * robot just drives its path and the turret does the aiming.
+ *
+ * <p>If the Shooter has no turret ({@code new Shooter(swerve)}), this routine falls back to the
+ * no-turret version: the robot turns its back toward the aim point while it drives, and stops
+ * aiming {@link #STOP_AIMING_BEFORE_ZONE_LINE_METERS} before the zone line on the way out.
  *
  * <ol>
  *   <li>Drive out under our trench and sweep the neutral zone right along the center line with
@@ -34,21 +38,20 @@ import java.util.function.DoubleSupplier;
  *   <li>Come back over the bump. From the moment the whole robot is inside our alliance zone, it
  *       SHOOTS ON THE MOVE and never stops: it drives (capped at 0.8 m/s in the path) past shoot
  *       spot 1 and through the depot, intake open and front-first so it picks up the depot balls,
- *       turning so its back always points at the Shooter's aim point.</li>
+ *       while the turret keeps the shooter on the aim point.</li>
  *   <li>After the depot it keeps shooting on the move (now also agitating) as it heads for our
- *       trench, until it is {@link #STOP_AIMING_BEFORE_ZONE_LINE_METERS} from the zone line. Then
- *       it stops aiming and straightens out to the path heading, so it goes under the trench
- *       straight, and ends near the middle of the field on our side.</li>
+ *       trench, until the robot leaves our alliance zone. Then it goes under the trench and ends
+ *       near the middle of the field on our side.</li>
  * </ol>
  *
  * <p><b>The Shooter does the math.</b> Every loop the Shooter works out the aim point (the hub
  * shifted against the robot's motion), the flywheel speed and hood angle for that distance, and the
- * field heading the robot should have ({@link Shooter#getTargetHeading()}). This routine only:
- * turns on the Shooter's auto aim, gives the Shooter's target heading to the drivetrain while
- * aiming, and feeds when {@link Shooter#isReadyToShoot()} is true and the robot is in our zone.
+ * turret angle that points at it. This routine only turns on the Shooter's auto aim and feeds when
+ * {@link Shooter#isReadyToShoot()} is true and the robot is in our zone. (Without a turret it also
+ * gives {@link Shooter#getTargetHeading()} to the drivetrain.)
  *
  * <p><b>Feeding.</b> A ball is only fed when the robot is fully inside our alliance zone AND
- * {@link Shooter#isReadyToShoot()} (flywheel at speed, hood on target, robot aimed, not faster than
+ * {@link Shooter#isReadyToShoot()} (flywheel at speed, hood on target, turret aimed, not faster than
  * 2.5 m/s, aim point within the shot tables). Feeding runs the Dye {@link #FEED_RATE_SCALE} times
  * faster than Dye.feed(); otherwise the Dye runs {@link Dye#reverse()}. Watch {@code Auto/InZone},
  * {@code Auto/ShooterReady} and {@code shooter/AimErrorDegrees} on the dashboard to see what it is
@@ -60,7 +63,7 @@ import java.util.function.DoubleSupplier;
  * so the robot drives slowly while it shoots. If you change it in Choreo, keep the depot as the only
  * split and no Stop Points in the middle.
  *
- * <p><b>Agitating.</b> Only after the depot, while still aiming (before the depot the intake has to
+ * <p><b>Agitating.</b> Only after the depot, while still shooting (before the depot the intake has to
  * stay down to pick up the depot balls). The intake moves up and down ({@link #AGITATE_PERIOD_SECONDS}
  * per cycle) using Intake's stow() and deploy(), because Intake.agitate() as written only raises the
  * intake. It is left down when agitating stops.
@@ -100,7 +103,7 @@ public final class TideAutoRoutine {
     private static final double ZONE_MARGIN_METERS = 0.41;
 
     /**
-     * After the depot, stop aiming this far (robot center, beyond {@link #ZONE_MARGIN_METERS}) before
+     * NO-TURRET fallback only: after the depot, stop aiming this far (robot center, beyond {@link #ZONE_MARGIN_METERS}) before
      * the zone line, so the robot has room to straighten out before it goes under the trench.
      */
     private static final double STOP_AIMING_BEFORE_ZONE_LINE_METERS = 0.6;
@@ -136,27 +139,35 @@ public final class TideAutoRoutine {
         }
 
         BooleanSupplier inZone = () -> inOurAllianceZone(swerve, ZONE_MARGIN_METERS);
-        BooleanSupplier aimAfterDepot = () -> inOurAllianceZone(
-                swerve, ZONE_MARGIN_METERS + STOP_AIMING_BEFORE_ZONE_LINE_METERS);
         DoubleSupplier aimHeading = () -> shooter.getTargetHeading().getRadians();
+
+        // With a turret the robot never turns to aim: it follows the path's heading the whole time,
+        // and shoots until it leaves our zone. Without a turret the robot turns to aim while in our
+        // zone, and after the depot stops aiming a bit before the zone line to straighten out.
+        boolean turret = shooter.hasTurret();
+        BooleanSupplier never = () -> false;
+        BooleanSupplier turnRobotBeforeDepot = turret ? never : inZone;
+        BooleanSupplier shootAfterDepot = turret ? inZone : () -> inOurAllianceZone(
+                swerve, ZONE_MARGIN_METERS + STOP_AIMING_BEFORE_ZONE_LINE_METERS);
+        BooleanSupplier turnRobotAfterDepot = turret ? never : shootAfterDepot;
 
         return Commands.sequence(
                 factory.resetOdometry(path),
                 shooterAimsAtHub(shooter),
                 Commands.runOnce(intake::deploy, intake),
 
-                // 1. Sweep (intake open), back over the bump. Once fully in our zone: aim and shoot
-                //    on the move, past shoot spot 1 and through the depot (intake open).
+                // 1. Sweep (intake open), back over the bump. Once fully in our zone: shoot on the
+                //    move (the turret aims), past shoot spot 1 and through the depot (intake open).
                 Commands.deadline(
-                        new ScaledPathFollower(swerve, toDepot.get(), 1.0, inZone, aimHeading),
+                        new ScaledPathFollower(swerve, toDepot.get(), 1.0, turnRobotBeforeDepot, aimHeading),
                         shoot(dye, shooter, inZone)),
 
-                // 2. Keep shooting on the move (and agitating) toward our trench, then straighten
-                //    out, go under the trench and end near the middle on our side.
+                // 2. Keep shooting on the move (and agitating) toward our trench until we leave our
+                //    zone, then go under the trench and end near the middle on our side.
                 Commands.deadline(
-                        new ScaledPathFollower(swerve, toEnd.get(), 1.0, aimAfterDepot, aimHeading),
-                        shoot(dye, shooter, aimAfterDepot),
-                        agitate(intake).onlyWhile(aimAfterDepot)),
+                        new ScaledPathFollower(swerve, toEnd.get(), 1.0, turnRobotAfterDepot, aimHeading),
+                        shoot(dye, shooter, shootAfterDepot),
+                        agitate(intake).onlyWhile(shootAfterDepot)),
                 Commands.runOnce(intake::deploy, intake),
                 stop(swerve))
                 .withName("Tide Auto");
