@@ -36,7 +36,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
   private Swerve swerve;
   private Intake intake;
-  //privae Turret turret;
+  private Turret turret;
   private Shooter shooter;
   //private Limelight limelight;
   private Dye dye;
@@ -57,7 +57,7 @@ public class RobotContainer {
     //limelight = new Limelight();
     swerve = Swerve.getInstance();
     shooter = new Shooter(swerve);
-    //turret = new Turret(swerve);
+    turret = new Turret(swerve);
     dye = new Dye();
 
     if (HardwareConfig.VISION_VERIFIED) {
@@ -101,10 +101,10 @@ public class RobotContainer {
 //     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
       
 // //Dye(testing)
- dye.reverse();
-new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
-    .whileTrue(new RunCommand(() -> dye.feed(), dye))
-    .onFalse(new InstantCommand(() -> dye.reverse(), dye));
+//  dye.reverse();
+// new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+//     .whileTrue(new RunCommand(() -> dye.feed(), dye))
+//     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
 
 // intake.deploy();
 // // Intake
@@ -113,8 +113,9 @@ new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
 //      .onFalse(new InstantCommand(() -> intake.deploy(), intake));
     
 // // //Shooter
-//shooter.setTargetVelocity(80);  
+//shooter.setTargetVelocity(20);  
 // shooter.setTargetAngle(-30);
+turret.setTargetAngle(Degrees.of(180));
   }
 
   public Command getAutonomousCommand() {

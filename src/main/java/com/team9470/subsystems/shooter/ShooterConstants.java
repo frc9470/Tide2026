@@ -16,7 +16,7 @@ public final class ShooterConstants {
     public static final double ACCELERATION = 15; 
     public static final double JERK = 0; 
 
-    public static final double kP = 100.0;
+    public static final double kP = 0.0;
     public static final double kD = 0.0;
     public static final double kS = 0.0;
     public static final double kV = 0.0;

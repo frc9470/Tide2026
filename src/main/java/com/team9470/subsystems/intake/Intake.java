@@ -62,23 +62,23 @@ public class Intake extends SubsystemBase{
         double intakeTargetPosition = Double.NaN;
 
         //homing
-        if(homing){
-            rightIntakeMotor.setVoltage(IntakeConstants.kHomingVoltage);
-            boolean stalled = IntakeConstants.kStallCurrent =< rightIntakeMotor.getStatorCurrent().getValueAsDouble()
-                && IntakeConstants.kStallVelocity >= rightIntakeMotor.getVelocity().getValueAsDouble();
-            double now = Timer.getFPGATimestamp();
-            if(homingStallStart == Double.NaN){
-                homingStallStart = now;
-            }
-            else if(stalled && now - homingStallStart > IntakeConstants.kStallTime){
-                rightIntakeMotor.setControl(intakePositionRequest);
-                rightIntakeMotor.setPosition(IntakeConstants.kHome);
-                homing = false;
-            }
-            else{
-                homingStallStart = Double.NaN;
-            }
-        }
+        // if(homing){
+        //     //rightIntakeMotor.setVoltage(IntakeConstants.kHomingVoltage);
+        //     boolean stalled = IntakeConstants.kStallCurrent <= rightIntakeMotor.getStatorCurrent().getValueAsDouble()
+        //         && IntakeConstants.kStallVelocity >= rightIntakeMotor.getVelocity().getValueAsDouble();
+        //     double now = Timer.getFPGATimestamp();
+        //     if(homingStallStart == Double.NaN){
+        //         homingStallStart = now;
+        //     }
+        //     else if(stalled && now - homingStallStart > IntakeConstants.kStallTime){
+        //         //rightIntakeMotor.setControl(intakePositionRequest);
+        //         //rightIntakeMotor.setPosition(IntakeConstants.kHome);
+        //         homing = false;
+        //     }
+        //     else{
+        //         homingStallStart = Double.NaN;
+        //     }
+        // }
 
         //rollers
         if(deployed || agitating){

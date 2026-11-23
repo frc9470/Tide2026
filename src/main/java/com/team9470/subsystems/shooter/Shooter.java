@@ -61,23 +61,23 @@ public class Shooter extends SubsystemBase {
 
 
         //homing
-        if(homing){
-            hoodMotor.setVoltage(ShooterConstants.kHomingVoltage);
-            boolean stalled = ShooterConstants.kStallCurrent <= hoodMotor.getStatorCurrent().getValueAsDouble()
-                && ShooterConstants.kStallVelocity >= hoodMotor.getVelocity().getValueAsDouble();
-            double now = Timer.getFPGATimestamp();
-            if(homingStallStart == Double.NaN){
-                homingStallStart = now;
-            }
-            else if(stalled && now - homingStallStart > ShooterConstants.kStallTime){
-                hoodMotor.setPosition(ShooterConstants.kHome);
-                hoodMotor.setControl(hoodMotionMagic.withPosition(targetHoodAngle));
-                homing = false;
-            }
-            else{
-                homingStallStart = Double.NaN;
-            }
-        }
+        // if(homing){
+        //     hoodMotor.setVoltage(ShooterConstants.kHomingVoltage);
+        //     boolean stalled = ShooterConstants.kStallCurrent <= hoodMotor.getStatorCurrent().getValueAsDouble()
+        //         && ShooterConstants.kStallVelocity >= hoodMotor.getVelocity().getValueAsDouble();
+        //     double now = Timer.getFPGATimestamp();
+        //     if(homingStallStart == Double.NaN){
+        //         homingStallStart = now;
+        //     }
+        //     else if(stalled && now - homingStallStart > ShooterConstants.kStallTime){
+        //         hoodMotor.setPosition(ShooterConstants.kHome);
+        //         hoodMotor.setControl(hoodMotionMagic.withPosition(targetHoodAngle));
+        //         homing = false;
+        //     }
+        //     else{
+        //         homingStallStart = Double.NaN;
+        //     }
+        // }
 
         calculateTargetMain();
         //targetHoodAngle = Units.Rotations.of(MathUtil.clamp(targetHoodAngle.in(Rotations), ShooterConstants.lowerLimit.in(Rotations), ShooterConstants.upperLimit.in(Rotations)));

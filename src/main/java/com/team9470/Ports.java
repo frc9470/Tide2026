@@ -8,7 +8,7 @@ public final class Ports {
   }
   public static final String CANIVORE = "canivore";
   // random number for ports rn cuz idfk what their in
-  public static final CanDeviceId TURRET_MOTOR = new CanDeviceId(0);
+  public static final CanDeviceId TURRET_MOTOR = new CanDeviceId(38, CANIVORE);
 
   public static final CanDeviceId RIGHT_ROLLER_MOTOR = new CanDeviceId(61,CANIVORE);
   public static final CanDeviceId LEFT_ROLLER_MOTOR = new CanDeviceId(36,CANIVORE);

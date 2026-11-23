@@ -1,6 +1,7 @@
 package com.team9470.subsystems.turret;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.team254.lib.drivers.TalonFXFactory;
 import com.team254.lib.drivers.TalonUtil;
@@ -21,7 +22,7 @@ public class Turret extends SubsystemBase {
 
     private static TalonFX turretMotor;
 
-    private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
+    private final PositionVoltage motionMagic = new PositionVoltage(0);
     //private PIDController controller = new PIDController(TurretConstants.kP, 0, TurretConstants.kD);
     //private double targetVelocity = 0;
     public static Angle targetAngle = Units.Degrees.of(0);
@@ -40,13 +41,14 @@ public class Turret extends SubsystemBase {
         //targetAngle = Units.Rotations.of(MathUtil.clamp(targetAngle.in(Rotations), TurretConstants.lowerLimit.in(Rotations), TurretConstants.upperLimit.in(Rotations)));
         turretMotor.setControl(motionMagic.withPosition(targetAngle));
         SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
+        SmartDashboard.putNumber("Turret/Angle", getAngle().in(Degrees));        
         SmartDashboard.putNumber("Turret/Error", targetAngle.in(Degrees)-getAngle().in(Degrees));
     }
     public static Angle getAngle() {
         return turretMotor.getPosition().getValue();
     }
 
-    private void setTargetAngle(Angle angle) {
+    public void setTargetAngle(Angle angle) {
         targetAngle = angle;
     }
 
