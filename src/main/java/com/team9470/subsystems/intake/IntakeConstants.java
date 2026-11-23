@@ -26,45 +26,28 @@ public class IntakeConstants {
     public static final double kKickerSupplyCurrentLimit = 40.0;
 
     //homing constants
-    public static final double kHomingVoltage = 3.0;
+    public static final double kHomingVoltage = -3.0;
     public static final double kStallCurrent = 20.0;
-    public static final double kStallVelocity = 0.7;
+    public static final double kStallVelocity = 0.1;
     public static final double kStallTime = 0.05;
     public static final double kHome = 0.0;
 
     public static final double ROLLER_SPEED = 10;
 
-    public static final double DEPLOYED_POSITION_ROTATIONS = -16;
-    public static final double LEFT_DEPLOYED_POSITION_ROTATIONS = -16;
-    public static final double STOWED_POSITION_ROTATIONS = -10;
+    public static final double DEPLOYED_POSITION_ROTATIONS = 1.0;
+    public static final double AGITATE_POSITION_ROTATIONS = .6;
 
     public static final double KICKER_SPEED = 6;
 
     public static final int kS = 0;
     public static final int kV = 0;
     public static final int kP = 3;
-    public static TalonFXConfiguration getConfig() {
-        TalonFXConfiguration config = new TalonFXConfiguration();
-        config.Slot0.kS = kS;
-        config.Slot0.kV = kV;
-        config.Slot0.kP = kP;
-        config.Feedback.SensorToMechanismRatio = 1;
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.StatorCurrentLimit = kIntakeStatorCurrentLimit;
-        return config;
-    }
+
+    public static final double INTAKE_RACK_GEAR_RATIO = (38/10)*(50/10);
+
+
     public static TalonFXConfiguration getReverseConfig() {
         TalonFXConfiguration config = new TalonFXConfiguration();
-        config.Slot0.kS = kS;
-        config.Slot0.kV = kV;
-        config.Slot0.kP = kP;
-        config.Feedback.SensorToMechanismRatio = 1;
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.StatorCurrentLimit = kIntakeStatorCurrentLimit;
         return config;
     }
     static {
@@ -77,13 +60,25 @@ public class IntakeConstants {
 
 
         //Left Roller
-        kLeftRollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        kLeftRollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        kLeftIntakeDeployConfig.Slot0.kS = kS;
+        kLeftIntakeDeployConfig.Slot0.kV = kV;
+        kLeftIntakeDeployConfig.Slot0.kP = kP;
+        kLeftIntakeDeployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        kLeftIntakeDeployConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        kLeftIntakeDeployConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        kLeftIntakeDeployConfig.CurrentLimits.StatorCurrentLimit = kIntakeStatorCurrentLimit;
+        kLeftIntakeDeployConfig.Feedback.SensorToMechanismRatio = INTAKE_RACK_GEAR_RATIO;
         // kLeftRollerConfig.CurrentLimits;dont worry about this
 
         //Right Intake Deploy
+        kRightIntakeDeployConfig.Slot0.kS = kS;
+        kRightIntakeDeployConfig.Slot0.kV = kV;
+        kRightIntakeDeployConfig.Slot0.kP = kP;
         kRightIntakeDeployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        kRightIntakeDeployConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        kRightIntakeDeployConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        kRightIntakeDeployConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        kRightIntakeDeployConfig.CurrentLimits.StatorCurrentLimit = kIntakeStatorCurrentLimit;
+        kRightIntakeDeployConfig.Feedback.SensorToMechanismRatio = INTAKE_RACK_GEAR_RATIO;
 
         //Left Intake Deploy
         kLeftIntakeDeployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;

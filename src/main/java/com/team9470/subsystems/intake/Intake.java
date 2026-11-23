@@ -2,7 +2,7 @@ package com.team9470.subsystems.intake;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 
@@ -32,6 +32,8 @@ public class Intake extends SubsystemBase{
 
     private double homingStallStart = Double.NaN;
 
+    private double cachedPivotKP, cachedPivotKI, cachedPivotKD;
+
     private Timer timer = new Timer();
 
     public Intake() {
@@ -46,8 +48,8 @@ public class Intake extends SubsystemBase{
         TalonUtil.applyAndCheckConfiguration(rightRollerMotor, IntakeConstants.kRightRollerConfig);
         TalonUtil.applyAndCheckConfiguration(leftRollerMotor, IntakeConstants.kLeftRollerConfig);
 
-        TalonUtil.applyAndCheckConfiguration(rightIntakeMotor, IntakeConstants.getConfig());
-        TalonUtil.applyAndCheckConfiguration(leftIntakeMotor, IntakeConstants.getReverseConfig());
+        TalonUtil.applyAndCheckConfiguration(rightIntakeMotor, IntakeConstants.kRightIntakeDeployConfig);
+        TalonUtil.applyAndCheckConfiguration(leftIntakeMotor, IntakeConstants.kLeftIntakeDeployConfig);
 
         TalonUtil.applyAndCheckConfiguration(kickerMotor, IntakeConstants.kKickerRollerConfig);
 
@@ -62,57 +64,60 @@ public class Intake extends SubsystemBase{
         double intakeTargetPosition = Double.NaN;
 
         //homing
-        // if(homing){
-        //     //rightIntakeMotor.setVoltage(IntakeConstants.kHomingVoltage);
-        //     boolean stalled = IntakeConstants.kStallCurrent <= rightIntakeMotor.getStatorCurrent().getValueAsDouble()
-        //         && IntakeConstants.kStallVelocity >= rightIntakeMotor.getVelocity().getValueAsDouble();
-        //     double now = Timer.getFPGATimestamp();
-        //     if(homingStallStart == Double.NaN){
-        //         homingStallStart = now;
-        //     }
-        //     else if(stalled && now - homingStallStart > IntakeConstants.kStallTime){
-        //         //rightIntakeMotor.setControl(intakePositionRequest);
-        //         //rightIntakeMotor.setPosition(IntakeConstants.kHome);
-        //         homing = false;
-        //     }
-        //     else{
-        //         homingStallStart = Double.NaN;
-        //     }
-        // }
-
-        //rollers
-        if(deployed || agitating){
-            if(outtaking) {
-                rollerVolts = -IntakeConstants.ROLLER_SPEED;
-                kickerVolts = -IntakeConstants.KICKER_SPEED;
+        if(homing){
+            rightIntakeMotor.setVoltage(IntakeConstants.kHomingVoltage);
+            boolean stalled = (IntakeConstants.kStallCurrent <= rightIntakeMotor.getStatorCurrent().getValueAsDouble())
+                && IntakeConstants.kStallVelocity >= rightIntakeMotor.getVelocity().getValueAsDouble();
+            double now = Timer.getFPGATimestamp();
+            if(stalled){
+                if(Double.isNaN(homingStallStart)){
+                    homingStallStart = now;
+                }
+                else if(stalled && now - homingStallStart > IntakeConstants.kStallTime){
+                    rightIntakeMotor.setControl(intakePositionRequest);
+                    rightIntakeMotor.setPosition(IntakeConstants.kHome);
+                    homing = false;
+                }
             }
             else{
-                rollerVolts = IntakeConstants.ROLLER_SPEED;
-                kickerVolts = IntakeConstants.KICKER_SPEED;
+                homingStallStart = Double.NaN;
             }
         }
-        else {
-            rollerVolts = 0.0;
-            kickerVolts = 0.0;
-        }
+        else{
+        //rollers
+            if(deployed || agitating){
+                if(outtaking) {
+                    rollerVolts = -IntakeConstants.ROLLER_SPEED;
+                    kickerVolts = -IntakeConstants.KICKER_SPEED;
+                }
+                else{
+                    rollerVolts = IntakeConstants.ROLLER_SPEED;
+                    kickerVolts = IntakeConstants.KICKER_SPEED;
+                }
+            }
+            else {
+                rollerVolts = 0.0;
+                kickerVolts = 0.0;
+            }
 
-        rightRollerMotor.setVoltage(rollerVolts);
-        kickerMotor.setVoltage(kickerVolts);
+            rightRollerMotor.setVoltage(rollerVolts);
+            kickerMotor.setVoltage(kickerVolts);
         
         //lintake
-        if(deployed){
-            intakeTargetPosition = IntakeConstants.DEPLOYED_POSITION_ROTATIONS;
-        }
-        else if (agitating) {
-            if(timer.get() % 1.0 <= 0.5){
-                intakeTargetPosition = IntakeConstants.STOWED_POSITION_ROTATIONS;
-            }
-            else{
+            if(deployed){
                 intakeTargetPosition = IntakeConstants.DEPLOYED_POSITION_ROTATIONS;
             }
-        }
+            else if (agitating) {
+                if(timer.get() % 1.0 <= 0.5){
+                    intakeTargetPosition = IntakeConstants.AGITATE_POSITION_ROTATIONS;
+                }
+                else{
+                    intakeTargetPosition = IntakeConstants.DEPLOYED_POSITION_ROTATIONS;
+                }
+            }
 
-        rightIntakeMotor.setControl(intakePositionRequest.withPosition(intakeTargetPosition));
+            rightIntakeMotor.setControl(intakePositionRequest.withPosition(intakeTargetPosition));
+        }
 
         //Smart Dashboard
         SmartDashboard.putBoolean("Intake/Deployed", deployed);
@@ -130,6 +135,25 @@ public class Intake extends SubsystemBase{
         SmartDashboard.putNumber("Intake/Rollers/Current/Target", rightIntakeMotor.getMotorVoltage().getValueAsDouble());
 
         SmartDashboard.putNumber("Intake/Kicker", kickerMotor.getStatorCurrent().getValueAsDouble());
+
+
+        cachedPivotKP = IntakeConstants.kRightIntakeDeployConfig.Slot0.kP;
+        cachedPivotKI = IntakeConstants.kRightIntakeDeployConfig.Slot0.kI;
+        cachedPivotKD = IntakeConstants.kRightIntakeDeployConfig.Slot0.kD;
+        SmartDashboard.putNumber("Intake/PID/kP", cachedPivotKP);
+        SmartDashboard.putNumber("Intake/PID/kI", cachedPivotKI);
+        SmartDashboard.putNumber("Intake/PID/kD", cachedPivotKD);
+        double pivotKP = SmartDashboard.getNumber("Intake/PID/kP", cachedPivotKP);
+        double pivotKI = SmartDashboard.getNumber("Intake/PID/kI", cachedPivotKI);
+        double pivotKD = SmartDashboard.getNumber("Intake/PID/kD", cachedPivotKD);
+        if (pivotKP != cachedPivotKP || pivotKI != cachedPivotKI || pivotKD != cachedPivotKD) {
+            cachedPivotKP = pivotKP;
+            cachedPivotKI = pivotKI;
+            cachedPivotKD = pivotKD;
+            Slot0Configs newPivotGains = new Slot0Configs()
+                    .withKP(pivotKP).withKI(pivotKI).withKD(pivotKD);
+            rightIntakeMotor.getConfigurator().apply(newPivotGains);
+        }
     }
 
     public void deploy() {
