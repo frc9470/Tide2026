@@ -25,6 +25,7 @@ import com.team9470.subsystems.turret.TurretConstants;
 import com.team9470.subsystems.dye.Dye;
 import com.team9470.subsystems.intake.Intake;
 import com.team9470.subsystems.shooter.Shooter;
+import com.team9470.subsystems.shooter.ShooterConstants;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -36,7 +37,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
   private Swerve swerve;
   private Intake intake;
-  //privae Turret turret;
+  private Turret turret;
   private Shooter shooter;
   //private Limelight limelight;
   private Dye dye;
@@ -90,6 +91,15 @@ public class RobotContainer {
     driver.back().and(DriverStation::isTestEnabled)
         .whileTrue(new WheelRadiusCharacterization(swerve));
 
+      driver.leftBumper().onTrue(intake.getDeployCommand());
+
+      driver.rightBumper().onTrue(intake.getAgitateCommand());
+
+      // driver.leftTrigger().onTrue(
+        
+      // );
+
+
     //driver.rightStick().onTrue(shooter.getHomeHoodCommand());
 //autoaim
 //  new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
@@ -100,21 +110,34 @@ public class RobotContainer {
 //     .whileTrue(new RunCommand(() -> dye.feed(), dye))
 //     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
       
-// //Dye(testing)
- dye.reverse();
+// Dye(testing)
+//  dye.reverse();
 new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
     .whileTrue(new RunCommand(() -> dye.feed(), dye))
     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
 
-// intake.deploy();
-// // Intake
+// Intake
 // new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
-//      .whileTrue(new RunCommand(() -> intake.outtake(), intake))
-//      .onFalse(new InstantCommand(() -> intake.deploy(), intake));
+//      .whileTrue(intake.getAgitateCommand());
     
 // // //Shooter
 //shooter.setTargetVelocity(80);  
 // shooter.setTargetAngle(-30);
+  }
+
+  // public Command aim(){
+  //   turret.
+  // }
+
+  private Command shoot() {
+    return Commands.run(() -> {
+        if(Math.abs(shooter.getVelocityError()) <= ShooterConstants.kShooterVelocityTolerance && shooter.getHoodError() <= ShooterConstants.kHoodAngleTolerance){
+          dye.feed();
+          
+        }
+        
+      }
+    );
   }
 
   public Command getAutonomousCommand() {

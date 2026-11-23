@@ -30,18 +30,22 @@ public final class ShooterConstants {
     private static final double kHoodStatorCurrentLimit = 40.0;
     private static final double kShooterStatorCurrentLimit = 40.0;
 
+    public static final double kShooterVelocityTolerance = 2.0;
+    public static final double kHoodAngleTolerance = 5.0;
+
     //hood homing
     public static double kHome = 0.0;
     public static double kHomingVoltage = -3.0;
     public static double kStallCurrent = 20.0;
     public static double kStallVelocity = 2.0;
-    public static double kStallTime = 0.1;
+    public static double kStallTime = 0.05;
 
 
     public static final double SHOOTER_GEAR_RATIO1 = 20.0 / 36.0; 
     public static final double SHOOTER_GEAR_RATIO2 = 1;
-    public static final double HOOD_GEAR_RATIO = (8.0 / 24.0) * (24.0 / 20.0) * (1.0 / 50.0); 
-    public static final double HODD_ANGLE_GEAR_RATIO = (HOOD_GEAR_RATIO)*360/50;
+    public static final double HOOD_GEAR_RATIO = (32 / 22) * (22 / 20) * (24 / 8); 
+    public static final double HOOD_ANGLE_GEAR_RATIO = (HOOD_GEAR_RATIO)* 360 / 50;
+
     public static TalonFXConfiguration getFrontShooterConfig() {
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.MotionMagic.MotionMagicCruiseVelocity = CRUISE_VELOCITY;
@@ -91,7 +95,7 @@ public final class ShooterConstants {
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.StatorCurrentLimit = kHoodStatorCurrentLimit;
-        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         return config;
     }
 }

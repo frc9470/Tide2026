@@ -8,6 +8,7 @@ import com.team9470.FieldConstants;
 import com.team9470.Ports;
 import com.team9470.subsystems.swerve.Swerve;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -37,7 +38,11 @@ public class Turret extends SubsystemBase {
     @Override
     public void periodic() {
         //calculateTargetMain();
-        //targetAngle = Units.Rotations.of(MathUtil.clamp(targetAngle.in(Rotations), TurretConstants.lowerLimit.in(Rotations), TurretConstants.upperLimit.in(Rotations)));
+        targetAngle = Units.Rotations.of(MathUtil.clamp(targetAngle.in(Rotations), TurretConstants.lowerLimit.in(Rotations), TurretConstants.upperLimit.in(Rotations)));
+
+        
+
+
         turretMotor.setControl(motionMagic.withPosition(targetAngle));
         SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
         SmartDashboard.putNumber("Turret/Error", targetAngle.in(Degrees)-getAngle().in(Degrees));
@@ -49,6 +54,11 @@ public class Turret extends SubsystemBase {
     private void setTargetAngle(Angle angle) {
         targetAngle = angle;
     }
+
+    // public void getAimCommand(){
+
+    //     setTargetAngle();
+    // }
 
     @SuppressWarnings("unused")
     private void calculateTargetMain(){
