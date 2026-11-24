@@ -5,5 +5,5 @@ public final class HardwareConfig {
   private HardwareConfig() {}
 
   public static boolean DRIVETRAIN_VERIFIED = true;
-  public static boolean VISION_VERIFIED = false;
+  public static boolean VISION_VERIFIED = true;
 }

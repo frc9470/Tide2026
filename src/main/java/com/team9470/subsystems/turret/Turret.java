@@ -11,6 +11,7 @@ import com.team254.lib.drivers.TalonUtil;
 import com.team9470.FieldConstants;
 import com.team9470.Ports;
 import com.team9470.subsystems.swerve.Swerve;
+import com.team9470.subsystems.vision.Limelight;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -32,7 +33,7 @@ public class Turret extends SubsystemBase {
     //private PIDController controller = new PIDController(TurretConstants.kP, 0, TurretConstants.kD);
     //private double targetVelocity = 0;
     public static Angle targetAngle = Units.Degrees.of(0);
-    private Swerve poseSlave;
+    private Limelight poseSlave;
     public boolean targetHub = true;
 
     private double
@@ -43,7 +44,7 @@ public class Turret extends SubsystemBase {
         cachedPivotKG = TurretConstants.kTurretConfig.Slot0.kG,
         cachedPivotKV = TurretConstants.kTurretConfig.Slot0.kV;
     
-    public Turret(Swerve swerve) {
+    public Turret(Limelight swerve) {
         poseSlave = swerve;
         turretMotor = TalonFXFactory.createDefaultTalon(Ports.TURRET_MOTOR); 
         TalonUtil.applyAndCheckConfiguration(turretMotor, TurretConstants.kTurretConfig);
@@ -54,14 +55,14 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putNumber("Turret/PID/kS", cachedPivotKS);
         SmartDashboard.putNumber("Turret/PID/kV", cachedPivotKV);
         SmartDashboard.putNumber("Turret/PID/kG", cachedPivotKG);
-        SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
+        
     }
     
     @Override
     public void periodic() {
-        //calculateTargetMain();
-        //targetAngle = Units.Rotations.of(MathUtil.clamp(targetAngle.in(Rotations), TurretConstants.lowerLimit.in(Rotations), TurretConstants.upperLimit.in(Rotations)));
-
+        calculateTargetHub();
+        //targetAngle = Units.Degrees.of(MathUtil.clamp(targetAngle.in(Degrees), TurretConstants.lowerLimit.in(Degrees), TurretConstants.upperLimit.in(Degrees)));
+        targetAngle = Units.Degrees.of(targetAngle.in(Degrees) % 360 - 225);
         boolean withinTolerance = Math.abs(getAngle().minus(targetAngle).in(Degree)) <= TurretConstants.kTolerance;
         // if(!withinTolerance){
             turretMotor.setControl(motionMagic.withPosition(targetAngle));
@@ -69,10 +70,10 @@ public class Turret extends SubsystemBase {
         // else{
         //     turretMotor.setPosition(targetAngle);
         // }
-
+SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
         SmartDashboard.putNumber("Turret/Angle", getAngle().in(Degrees));        
         SmartDashboard.putNumber("Turret/Error", targetAngle.in(Degrees)-getAngle().in(Degrees));
-
+        
         targetAngle = Degrees.of(SmartDashboard.getNumber("Turret/TargetAngle", targetAngle.in(Degrees)));
 
         cachedPivotKP = TurretConstants.kTurretConfig.Slot0.kP;
@@ -121,16 +122,16 @@ public class Turret extends SubsystemBase {
     //     setTargetAngle();
     // }
 
-    @SuppressWarnings("unused")
-    private void calculateTargetMain(){
-        if(targetHub) calculateTargetHub();
-        else calculateTargetPass();
+    // @SuppressWarnings("unused")
+    // private void calculateTargetMain(){
+    //     if(targetHub) calculateTargetHub();
+    //     else calculateTargetPass();
     
-    }
+    // }
     private void calculateTargetHub() {
-        Pose2d robotPose = poseSlave.getPose();
+        Pose2d robotPose = poseSlave.getPose2d();
         Translation2d offset = new Pose2d(new Translation2d(FieldConstants.Hub.topCenterPoint.getX(), FieldConstants.Hub.topCenterPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
-        setTargetAngle(offset.getAngle().getMeasure());
+        setTargetAngle(Units.Degrees.of(offset.getAngle().getMeasure().in(Degrees)));
     }
 
     public static Angle calculateTarget() {
@@ -140,14 +141,14 @@ public class Turret extends SubsystemBase {
         velocityVector.times(TurretConstants.tof);
         return offset.minus(velocityVector).getAngle().getMeasure().plus(Radians.of(Math.PI));
     }
-    private void calculateTargetPass() {
+    // private void calculateTargetPass() {
         
-        Pose2d robotPose = poseSlave.getPose();
+    //     Pose2d robotPose = poseSlave.getPose();
         
-        Translation2d leftPass = new Pose2d(new Translation2d(FieldConstants.Depot.depotCenter.getX(), FieldConstants.Depot.depotCenter.getY()), new Rotation2d()).minus(robotPose).getTranslation();
-        Translation2d rightPass = new Pose2d(new Translation2d(FieldConstants.Outpost.centerPoint.getX(), FieldConstants.Outpost.centerPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
+    //     Translation2d leftPass = new Pose2d(new Translation2d(FieldConstants.Depot.depotCenter.getX(), FieldConstants.Depot.depotCenter.getY()), new Rotation2d()).minus(robotPose).getTranslation();
+    //     Translation2d rightPass = new Pose2d(new Translation2d(FieldConstants.Outpost.centerPoint.getX(), FieldConstants.Outpost.centerPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
         
-        setTargetAngle((leftPass.getNorm() < rightPass.getNorm() ? leftPass : rightPass).getAngle().getMeasure());
-    }
+    //     setTargetAngle((leftPass.getNorm() < rightPass.getNorm() ? leftPass : rightPass).getAngle().getMeasure());
+    // }
 
 }

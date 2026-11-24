@@ -39,7 +39,7 @@ public class RobotContainer {
   private Intake intake;
   private Turret turret;
   private Shooter shooter;
-  //private Limelight limelight;
+  private Limelight limelight;
   private Dye dye;
 
   public RobotContainer() {
@@ -55,14 +55,14 @@ public class RobotContainer {
     }
     intake = new Intake();
     
-    //limelight = new Limelight();
+    limelight = new Limelight();
     swerve = Swerve.getInstance();
     shooter = new Shooter(swerve);
-    turret = new Turret(swerve);
+    turret = new Turret(limelight);
     dye = new Dye();
 
     if (HardwareConfig.VISION_VERIFIED) {
-      Vision.getInstance().setVisionDisabled(false);
+      //Vision.getInstance().setVisionDisabled(false);
     }
     configureDriveBindings();
     configureAutos();

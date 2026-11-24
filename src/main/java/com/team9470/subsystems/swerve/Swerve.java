@@ -728,10 +728,10 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     @Override
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds,
             Matrix<N3, N1> visionMeasurementStdDevs) {
-        if (visionPoseAcceptor.shouldAcceptVision(timestampSeconds, visionRobotPoseMeters, getPose(), getRobotTwist(),
-                DriverStation.isAutonomous() && !DriverStation.isDisabled())) {
+        //if (visionPoseAcceptor.shouldAcceptVision(timestampSeconds, visionRobotPoseMeters, getPose(), getRobotTwist(),
+         //       DriverStation.isAutonomous() && !DriverStation.isDisabled())) {
             super.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
-        }
+        //}
     }
 
 
