@@ -123,7 +123,8 @@ public class RobotContainer {
 // // //Shooter
 //shooter.setTargetVelocity(20);  
 // shooter.setTargetAngle(-30);
-turret.setTargetAngle(Degrees.of(180));
+// turret.setTargetAngle(Degrees.of(180));
+  turret.getSetTargetAngleCommand((turret.getAngle().plus(Degrees.of(driver.getRightX()))));
   }
 
   // public Command aim(){

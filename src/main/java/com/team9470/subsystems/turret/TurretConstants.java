@@ -14,26 +14,33 @@ public final class TurretConstants {
     public static final Angle lowerLimit = Units.Rotations.of(1);
     public static final double tof = 0.6;
     public static final double speedCap = 0.6;
-    public static final double kP = 30;
-    public static final double kD = 0;
-    public static final double kS = 0;
+    public static final double kP = 50;
+    public static final double kD = 0.5;
+    public static final double kS = 0.37;
     public static final double kV = 0;
     public static final double kA = 0;
+    public static final double kI = 10;
+    public static final double kG = 0;
 
-    public static final double GEAR_RATIO = 64;
+    public static final double kTolerance = 0.5;
 
-    public static TalonFXConfiguration getTurretConfig() {
-        TalonFXConfiguration config = new TalonFXConfiguration();
-        config.Slot0.kP = kP;
-        config.Slot0.kD = kD;
-        config.Slot0.kS = kS;
-        config.Slot0.kV = kV;
-        config.Slot0.kA = kD;
-        config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.CurrentLimits.StatorCurrentLimitEnable = false;
-        config.CurrentLimits.StatorCurrentLimit = 40;
-        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        return config;
+    public static final TalonFXConfiguration kTurretConfig = new TalonFXConfiguration();
+
+    public static final double TURRET_TO_GEAR_RATIO = (137.0 / 28.0) * (28.0 / 10.0) * (40.0 / 14.0);
+
+    static{
+        kTurretConfig.Slot0.kG = kG;
+        kTurretConfig.Slot0.kI = kI;
+        kTurretConfig.Slot0.kP = kP;
+        kTurretConfig.Slot0.kD = kD;
+        kTurretConfig.Slot0.kS = kS;
+        kTurretConfig.Slot0.kV = kV;
+        kTurretConfig.Slot0.kA = kD;
+        kTurretConfig.Feedback.SensorToMechanismRatio = TURRET_TO_GEAR_RATIO;
+        kTurretConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        kTurretConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        kTurretConfig.CurrentLimits.StatorCurrentLimit = 40;
+        kTurretConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
     }
 }

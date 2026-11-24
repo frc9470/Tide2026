@@ -43,7 +43,7 @@ public class IntakeConstants {
     public static final int kV = 0;
     public static final int kP = 3;
 
-    public static final double INTAKE_RACK_GEAR_RATIO = (38/10)*(50/10);
+    public static final double INTAKE_RACK_GEAR_RATIO = (38.0 / 10.0) * (50.0 / 10.0);
 
 
     public static TalonFXConfiguration getReverseConfig() {

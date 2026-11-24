@@ -43,8 +43,7 @@ public final class ShooterConstants {
 
     public static final double SHOOTER_GEAR_RATIO1 = 20.0 / 36.0; 
     public static final double SHOOTER_GEAR_RATIO2 = 1;
-    public static final double HOOD_GEAR_RATIO = (32 / 22) * (22 / 20) * (24 / 8); 
-    public static final double HOOD_ANGLE_GEAR_RATIO = (HOOD_GEAR_RATIO)* 360 / 50;
+    public static final double HOOD_GEAR_RATIO = (290.0 / 22.0) * (22.0 / 20.0) * (24.0 / 8.0); 
 
     public static TalonFXConfiguration getFrontShooterConfig() {
         TalonFXConfiguration config = new TalonFXConfiguration();

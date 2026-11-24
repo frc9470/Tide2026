@@ -1,8 +1,11 @@
 package com.team9470.subsystems.turret;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.team254.lib.drivers.TalonFXFactory;
 import com.team254.lib.drivers.TalonUtil;
 import com.team9470.FieldConstants;
@@ -16,6 +19,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static edu.wpi.first.units.Units.*;
@@ -29,32 +34,86 @@ public class Turret extends SubsystemBase {
     public static Angle targetAngle = Units.Degrees.of(0);
     private Swerve poseSlave;
     public boolean targetHub = true;
+
+    private double
+        cachedPivotKP = TurretConstants.kTurretConfig.Slot0.kP,
+        cachedPivotKI = TurretConstants.kTurretConfig.Slot0.kI,
+        cachedPivotKD = TurretConstants.kTurretConfig.Slot0.kD,
+        cachedPivotKS = TurretConstants.kTurretConfig.Slot0.kS,
+        cachedPivotKG = TurretConstants.kTurretConfig.Slot0.kG,
+        cachedPivotKV = TurretConstants.kTurretConfig.Slot0.kV;
     
     public Turret(Swerve swerve) {
         poseSlave = swerve;
         turretMotor = TalonFXFactory.createDefaultTalon(Ports.TURRET_MOTOR); 
-        TalonUtil.applyAndCheckConfiguration(turretMotor, TurretConstants.getTurretConfig());
-    }
+        TalonUtil.applyAndCheckConfiguration(turretMotor, TurretConstants.kTurretConfig);
 
+        SmartDashboard.putNumber("Turret/PID/kP", cachedPivotKP);
+        SmartDashboard.putNumber("Turret/PID/kI", cachedPivotKI);
+        SmartDashboard.putNumber("Turret/PID/kD", cachedPivotKD);
+        SmartDashboard.putNumber("Turret/PID/kS", cachedPivotKS);
+        SmartDashboard.putNumber("Turret/PID/kV", cachedPivotKV);
+        SmartDashboard.putNumber("Turret/PID/kG", cachedPivotKG);
+        SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
+    }
+    
     @Override
     public void periodic() {
         //calculateTargetMain();
-        targetAngle = Units.Rotations.of(MathUtil.clamp(targetAngle.in(Rotations), TurretConstants.lowerLimit.in(Rotations), TurretConstants.upperLimit.in(Rotations)));
+        //targetAngle = Units.Rotations.of(MathUtil.clamp(targetAngle.in(Rotations), TurretConstants.lowerLimit.in(Rotations), TurretConstants.upperLimit.in(Rotations)));
 
-        
+        boolean withinTolerance = Math.abs(getAngle().minus(targetAngle).in(Degree)) <= TurretConstants.kTolerance;
+        // if(!withinTolerance){
+            turretMotor.setControl(motionMagic.withPosition(targetAngle));
+        // }
+        // else{
+        //     turretMotor.setPosition(targetAngle);
+        // }
 
-
-        turretMotor.setControl(motionMagic.withPosition(targetAngle));
-        SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
         SmartDashboard.putNumber("Turret/Angle", getAngle().in(Degrees));        
         SmartDashboard.putNumber("Turret/Error", targetAngle.in(Degrees)-getAngle().in(Degrees));
+
+        targetAngle = Degrees.of(SmartDashboard.getNumber("Turret/TargetAngle", targetAngle.in(Degrees)));
+
+        cachedPivotKP = TurretConstants.kTurretConfig.Slot0.kP;
+        cachedPivotKI = TurretConstants.kTurretConfig.Slot0.kI;
+        cachedPivotKD = TurretConstants.kTurretConfig.Slot0.kD;
+        cachedPivotKS = TurretConstants.kTurretConfig.Slot0.kS;
+        cachedPivotKG = TurretConstants.kTurretConfig.Slot0.kG;
+        cachedPivotKV = TurretConstants.kTurretConfig.Slot0.kV;
+        double pivotKP = SmartDashboard.getNumber("Turret/PID/kP", cachedPivotKP);
+        double pivotKI = SmartDashboard.getNumber("Turret/PID/kI", cachedPivotKI);
+        double pivotKD = SmartDashboard.getNumber("Turret/PID/kD", cachedPivotKD);
+        double pivotKG = SmartDashboard.getNumber("Turret/PID/kG", cachedPivotKG);
+        double pivotKS = SmartDashboard.getNumber("Turret/PID/kS", cachedPivotKS);
+        double pivotKV = SmartDashboard.getNumber("Turret/PID/kV", cachedPivotKV);
+        if (pivotKP != cachedPivotKP || pivotKI != cachedPivotKI || pivotKD != cachedPivotKD || pivotKG != cachedPivotKG || pivotKS != cachedPivotKS || pivotKV != cachedPivotKV) {
+            cachedPivotKP = pivotKP;
+            cachedPivotKI = pivotKI;
+            cachedPivotKD = pivotKD;
+            cachedPivotKG = pivotKG;
+            cachedPivotKS = pivotKS;
+            cachedPivotKV = pivotKV;
+            Slot0Configs newPivotGains = new Slot0Configs()
+                    .withKP(pivotKP).withKI(pivotKI).withKD(pivotKD).withKG(pivotKG).withKS(pivotKS).withKV(pivotKV).withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign).withGravityType(GravityTypeValue.Arm_Cosine).withGravityArmPositionOffset(Units.Degrees.of(-45));
+            turretMotor.getConfigurator().apply(newPivotGains);
+        }
     }
+
     public static Angle getAngle() {
         return turretMotor.getPosition().getValue();
     }
 
     public void setTargetAngle(Angle angle) {
         targetAngle = angle;
+    }
+
+    public Command getSetTargetAngleCommand(Angle angle){
+        return Commands.runOnce(() -> setTargetAngle(angle));
+    }
+
+    public Command getTurretAngleCommand(){
+        return Commands.runOnce(() -> getAngle());
     }
 
     // public void getAimCommand(){
