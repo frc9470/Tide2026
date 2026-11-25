@@ -26,11 +26,11 @@ public class IntakeConstants {
     public static final double kKickerSupplyCurrentLimit = 40.0;
 
     //homing constants
-    public static final double kHomingVoltage = -3.0;
-    public static final double kStallCurrent = 20.0;
+    public static final double kHomingVoltage = 5.0;
+    public static final double kStallCurrent = 30.0;
     public static final double kStallVelocity = 0.1;
-    public static final double kStallTime = 0.05;
-    public static final double kHome = 0.0;
+    public static final double kStallTime = 0.2;
+    public static final double kHome = 1.0;
 
     public static final double ROLLER_SPEED = 10;
 
@@ -41,9 +41,9 @@ public class IntakeConstants {
 
     public static final int kS = 0;
     public static final int kV = 0;
-    public static final int kP = 3;
+    public static final int kP = 30;
 
-    public static final double INTAKE_RACK_GEAR_RATIO = (38.0 / 10.0) * (50.0 / 10.0);
+    public static final double INTAKE_RACK_GEAR_RATIO = (36.0 / 10.0) * (50.0 / 10.0);
 
 
     public static TalonFXConfiguration getReverseConfig() {

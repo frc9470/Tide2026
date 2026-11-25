@@ -57,7 +57,7 @@ public class RobotContainer {
     
     limelight = new Limelight();
     swerve = Swerve.getInstance();
-    shooter = new Shooter(swerve);
+    shooter = new Shooter(limelight);
     turret = new Turret(limelight);
     dye = new Dye();
 
@@ -87,7 +87,7 @@ public class RobotContainer {
         .withVelocityY(-driver.getLeftY() * maxSpeed )
         .withRotationalRate(driver.getRightX() * maxAngularRate )));
     driver.x().whileTrue(swerve.applyRequest(() -> xLock));
-    driver.rightStick().onTrue(Commands.runOnce(swerve::seedFieldCentric, swerve));
+    // driver.rightStick().onTrue(Commands.runOnce(swerve::seedFieldCentric, swerve));
     driver.back().and(DriverStation::isTestEnabled)
         .whileTrue(new WheelRadiusCharacterization(swerve));
 
@@ -100,7 +100,16 @@ public class RobotContainer {
       // );
 
 
-    //driver.rightStick().onTrue(shooter.getHomeHoodCommand());
+    driver.rightStick().onTrue(
+      shooter.getHomeHoodCommand().alongWith(
+      intake.getHomeCommand()
+    )
+    )
+    ;
+
+    // driver.rightTrigger().whileTrue(
+    //   dye.
+    // );
 //autoaim
 //  new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
 //    .whileTrue(new RunCommand(() -> swerve.targetAngle(-driver.getLeftY() * maxSpeed * TurretConstants.speedCap,-driver.getLeftX() * maxSpeed * TurretConstants.speedCap,Turret.calculateTarget()), swerve));
@@ -111,36 +120,35 @@ public class RobotContainer {
 //     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
       
 // //Dye(testing)
-//  dye.reverse();
-// new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
-//     .whileTrue(new RunCommand(() -> dye.feed(), dye))
-//     .onFalse(new InstantCommand(() -> dye.reverse(), dye));
+ dye.reverse();
+new Trigger(() -> driver.getRightTriggerAxis() > 0.3)
+    .whileTrue(new RunCommand(() -> dye.feed(), dye))
+    .onFalse(new InstantCommand(() -> dye.reverse(), dye));
 
 // Intake
 // new Trigger(() -> driver.getLeftTriggerAxis() > 0.3)
 //      .whileTrue(intake.getAgitateCommand());
     
 // // //Shooter
-//shooter.setTargetVelocity(20);  
-// shooter.setTargetAngle(-30);
+
 // turret.setTargetAngle(Degrees.of(180));
-  turret.getSetTargetAngleCommand((turret.getAngle().plus(Degrees.of(driver.getRightX()))));
+  // turret.getSetTargetAngleCommand((turret.getAngle().plus(Degrees.of(driver.getRightX()))));
   }
 
   // public Command aim(){
   //   turret.
   // }
 
-  private Command shoot() {
-    return Commands.run(() -> {
-        if(Math.abs(shooter.getVelocityError()) <= ShooterConstants.kShooterVelocityTolerance && shooter.getHoodError() <= ShooterConstants.kHoodAngleTolerance){
-          dye.feed();
+  // private Command shoot() {
+  //   return Commands.run(() -> {
+  //       if(Math.abs(shooter.getVelocityError()) <= ShooterConstants.kShooterVelocityTolerance && shooter.getHoodError() <= ShooterConstants.kHoodAngleTolerance){
+  //         dye.feed();
           
-        }
+  //       }
         
-      }
-    );
-  }
+  //     }
+  //   );
+  // }
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();

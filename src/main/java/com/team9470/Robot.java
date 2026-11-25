@@ -1,8 +1,13 @@
 package com.team9470;
 
+import com.team9470.subsystems.swerve.Swerve;
 import com.team9470.telemetry.MatchTimingService;
 import com.team9470.telemetry.PracticeTimerTracker;
 import com.team9470.telemetry.TelemetryManager;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
@@ -70,6 +75,7 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    Swerve.getInstance().resetPose(new Pose2d(new Translation2d(8,4), new Rotation2d(0)));
   }
   @Override
   public void teleopPeriodic() {

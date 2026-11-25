@@ -1,16 +1,23 @@
 package com.team9470.subsystems.shooter;
 
 import com.ctre.phoenix6.Timestamp;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.team254.lib.drivers.TalonFXFactory;
 import com.team254.lib.drivers.TalonUtil;
 import com.team9470.FieldConstants;
 import com.team9470.Ports;
 import com.team9470.subsystems.swerve.Swerve;
-import com.team9470.subsystems.turret.TurretConstants;
+import com.team9470.subsystems.vision.Limelight;
+import com.team9470.subsystems.shooter.ShooterConstants;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,20 +37,29 @@ public class Shooter extends SubsystemBase {
     private final TalonFX shooterMotor4;
     private final TalonFX hoodMotor;
 
-    private final MotionMagicVelocityVoltage motionMagic = new MotionMagicVelocityVoltage(0);
-    private final MotionMagicVoltage hoodMotionMagic = new MotionMagicVoltage(0);
+    private final VelocityVoltage motionMagic = new VelocityVoltage(0);
+    private final PositionVoltage hoodMotionMagic = new PositionVoltage(0);
     public static double targetShooterVelocity = 0;
     public static Angle targetHoodAngle = Units.Degrees.of(0);
     private double distance = 0;
-    private Swerve poseSlave;
+    private Limelight poseSlave;
     public boolean targetHub = true;
 
     private boolean homing = true;
     private double homingStallStart = Double.NaN;
 
-    public Shooter(Swerve swerve) {
+    private double
+        cachedPivotKP = ShooterConstants.kHoodConfig.Slot0.kP,
+        cachedPivotKI = ShooterConstants.kHoodConfig.Slot0.kI,
+        cachedPivotKD = ShooterConstants.kHoodConfig.Slot0.kD,
+        cachedPivotKS = ShooterConstants.kHoodConfig.Slot0.kS,
+        cachedPivotKG = ShooterConstants.kHoodConfig.Slot0.kG,
+        cachedPivotKV = ShooterConstants.kHoodConfig.Slot0.kV;
+
+    public Shooter(Limelight swerve) {
         poseSlave = swerve;
         hoodMotor = TalonFXFactory.createDefaultTalon(Ports.HOOD_MOTOR);
+        
         //shooterMotor1 = TalonFXFactory.createDefaultTalon(Ports.SHOOTER_MOTOR1); 
         shooterMotor2 = TalonFXFactory.createDefaultTalon(Ports.SHOOTER_MOTOR2); 
         shooterMotor3 = TalonFXFactory.createDefaultTalon(Ports.SHOOTER_MOTOR3); 
@@ -53,13 +69,20 @@ public class Shooter extends SubsystemBase {
         TalonUtil.applyAndCheckConfiguration(shooterMotor2, ShooterConstants.getFrontShooterConfig());
         TalonUtil.applyAndCheckConfiguration(shooterMotor3, ShooterConstants.getBackShooterConfig());
         TalonUtil.applyAndCheckConfiguration(shooterMotor4, ShooterConstants.getBackShooterConfig());
-        TalonUtil.applyAndCheckConfiguration(hoodMotor, ShooterConstants.getHoodConfig());
+        TalonUtil.applyAndCheckConfiguration(hoodMotor, ShooterConstants.kHoodConfig);
+
+        
+        SmartDashboard.putNumber("Hood/PID/kP", cachedPivotKP);
+        SmartDashboard.putNumber("Hood/PID/kI", cachedPivotKI);
+        SmartDashboard.putNumber("Hood/PID/kD", cachedPivotKD);
+        SmartDashboard.putNumber("Hood/PID/kS", cachedPivotKS);
+        SmartDashboard.putNumber("Hood/PID/kV", cachedPivotKV);
+        SmartDashboard.putNumber("Hood/PID/kG", cachedPivotKG);
+        SmartDashboard.putNumber("Shooter/TargetRpm", targetShooterVelocity);
     }
 
     @Override
     public void periodic() {
-
-
         //homing
         if(homing){
             hoodMotor.setVoltage(ShooterConstants.kHomingVoltage);
@@ -97,14 +120,43 @@ public class Shooter extends SubsystemBase {
 
             hoodMotor.setControl(hoodMotionMagic.withPosition(targetHoodAngle));
         }
+
+        //targetHoodAngle = Degrees.of(SmartDashboard.getNumber("Hood/TargetAngle", 0.0));
         SmartDashboard.putNumber("Shooter/TargetShooterVelocity", targetShooterVelocity);
         SmartDashboard.putNumber("Shooter/ShooterError", getVelocityError());
-
+        
         SmartDashboard.putBoolean("Hood/Homing", homing);
         SmartDashboard.putNumber("Hood/Angle", getAngle().in(Degrees));
         SmartDashboard.putNumber("Hood/Current", hoodMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("Hood/TargetAngle", targetHoodAngle.in(Degrees));
         SmartDashboard.putNumber("Hood/Error", getHoodError());
+        //targetShooterVelocity = SmartDashboard.getNumber("Shooter/TargetRpm", targetShooterVelocity);
+        
+        cachedPivotKP = ShooterConstants.kHoodConfig.Slot0.kP;
+        cachedPivotKI = ShooterConstants.kHoodConfig.Slot0.kI;
+        cachedPivotKD = ShooterConstants.kHoodConfig.Slot0.kD;
+        cachedPivotKS = ShooterConstants.kHoodConfig.Slot0.kS;
+        cachedPivotKG = ShooterConstants.kHoodConfig.Slot0.kG;
+        cachedPivotKV = ShooterConstants.kHoodConfig.Slot0.kV;
+        double pivotKP = SmartDashboard.getNumber("Hood/PID/kP", cachedPivotKP);
+        double pivotKI = SmartDashboard.getNumber("Hood/PID/kI", cachedPivotKI);
+        double pivotKD = SmartDashboard.getNumber("Hood/PID/kD", cachedPivotKD);
+        double pivotKG = SmartDashboard.getNumber("Hood/PID/kG", cachedPivotKG);
+        double pivotKS = SmartDashboard.getNumber("Hood/PID/kS", cachedPivotKS);
+        double pivotKV = SmartDashboard.getNumber("Hood/PID/kV", cachedPivotKV);
+        if (pivotKP != cachedPivotKP || pivotKI != cachedPivotKI || pivotKD != cachedPivotKD || pivotKG != cachedPivotKG || pivotKS != cachedPivotKS || pivotKV != cachedPivotKV) {
+            cachedPivotKP = pivotKP;
+            cachedPivotKI = pivotKI;
+            cachedPivotKD = pivotKD;
+            cachedPivotKG = pivotKG;
+            cachedPivotKS = pivotKS;
+            cachedPivotKV = pivotKV;
+            Slot0Configs newPivotGains = new Slot0Configs()
+                    .withKP(pivotKP).withKI(pivotKI).withKD(pivotKD).withKG(pivotKG).withKS(pivotKS).withKV(pivotKV).withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign).withGravityType(GravityTypeValue.Arm_Cosine).withGravityArmPositionOffset(Units.Degrees.of(0));
+            hoodMotor.getConfigurator().apply(newPivotGains);
+        }
+        targetHoodAngle = calculateHoodAngle();
+        targetShooterVelocity = (calculateVelocity());
     }
 
     public Angle getAngle() {
@@ -153,31 +205,38 @@ public class Shooter extends SubsystemBase {
         else calculateTargetPass();
     }
 
-    @SuppressWarnings("unused")
     private Angle calculateHoodAngle(){
-        return Degrees.of(distance); // replace with function
+        return Degrees.of(4.76151 * distance +5.75854);
     }
 
-    @SuppressWarnings("unused")
     private double calculateVelocity(){
-        return distance; // replace with function
+        return 7.0585 * distance+26.26131; 
     }
 
     private void calculateTargetHub() {
-        Pose2d robotPose = poseSlave.getPose();
-        Translation2d offset = new Pose2d(new Translation2d(FieldConstants.Hub.topCenterPoint.getX(), FieldConstants.Hub.topCenterPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
-        Translation2d velocityVector = new Translation2d(Swerve.getInstance().getChassisSpeeds().vxMetersPerSecond,Swerve.getInstance().getChassisSpeeds().vyMetersPerSecond).rotateBy(robotPose.getRotation());
-        velocityVector.times(TurretConstants.tof);
-        distance = offset.minus(velocityVector).getNorm();
+        Pose2d robotPose = poseSlave.getPose2d();
+
+    Translation2d offset = new Translation2d(FieldConstants.Hub.topCenterPoint.getX(),FieldConstants.Hub.topCenterPoint.getY()).minus(robotPose.getTranslation());
+
+    //double fieldAngle = offset.getAngle().getDegrees();
+    //double turretAngle = MathUtil.inputModulus( fieldAngle - robotPose.getRotation().getDegrees() - 180, -225, 135);
+    SmartDashboard.putNumber("Distance", offset.getNorm());
+    distance = offset.getNorm();
+    //setTargetAngle(Degrees.of(turretAngle));
+        // Pose2d robotPose = poseSlave.getPose();
+        // Translation2d offset = new Pose2d(new Translation2d(FieldConstants.Hub.topCenterPoint.getX(), FieldConstants.Hub.topCenterPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
+        // Translation2d velocityVector = new Translation2d(Swerve.getInstance().getChassisSpeeds().vxMetersPerSecond,Swerve.getInstance().getChassisSpeeds().vyMetersPerSecond).rotateBy(robotPose.getRotation());
+        // velocityVector.times(ShooterConstants.tof);
+        // distance = offset.minus(velocityVector).getNorm();
     }
 
     private void calculateTargetPass() {
         
-        Pose2d robotPose = poseSlave.getPose();
+        // Pose2d robotPose = poseSlave.getPose();
         
-        Translation2d leftPass = new Pose2d(new Translation2d(FieldConstants.Depot.depotCenter.getX(), FieldConstants.Depot.depotCenter.getY()), new Rotation2d()).minus(robotPose).getTranslation();
-        Translation2d rightPass = new Pose2d(new Translation2d(FieldConstants.Outpost.centerPoint.getX(), FieldConstants.Outpost.centerPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
+        // Translation2d leftPass = new Pose2d(new Translation2d(FieldConstants.Depot.depotCenter.getX(), FieldConstants.Depot.depotCenter.getY()), new Rotation2d()).minus(robotPose).getTranslation();
+        // Translation2d rightPass = new Pose2d(new Translation2d(FieldConstants.Outpost.centerPoint.getX(), FieldConstants.Outpost.centerPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
         
-        distance = (leftPass.getNorm() < rightPass.getNorm() ? leftPass : rightPass).getNorm();
+        // distance = (leftPass.getNorm() < rightPass.getNorm() ? leftPass : rightPass).getNorm();
     }
 }

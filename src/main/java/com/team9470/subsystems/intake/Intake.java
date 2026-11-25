@@ -23,7 +23,7 @@ public class Intake extends SubsystemBase{
     private final TalonFX leftIntakeMotor;
     private final TalonFX kickerMotor;
 
-    private final PositionVoltage intakePositionRequest = new PositionVoltage(0);
+    private final PositionVoltage intakePositionRequest = new PositionVoltage(1);
 
     private boolean deployed = false;
     private boolean agitating = false;
@@ -32,11 +32,16 @@ public class Intake extends SubsystemBase{
 
     private double homingStallStart = Double.NaN;
 
-    private double cachedPivotKP, cachedPivotKI, cachedPivotKD;
+    private double cachedPivotKP = IntakeConstants.kRightIntakeDeployConfig.Slot0.kP,
+        cachedPivotKI = IntakeConstants.kRightIntakeDeployConfig.Slot0.kI,
+        cachedPivotKD = IntakeConstants.kRightIntakeDeployConfig.Slot0.kD;
 
     private Timer timer = new Timer();
 
     public Intake() {
+        SmartDashboard.putNumber("Intake/PID/kP", cachedPivotKP);
+        SmartDashboard.putNumber("Intake/PID/kI", cachedPivotKI);
+        SmartDashboard.putNumber("Intake/PID/kD", cachedPivotKD);
         rightRollerMotor = TalonFXFactory.createDefaultTalon(Ports.RIGHT_ROLLER_MOTOR);
         leftRollerMotor = TalonFXFactory.createDefaultTalon(Ports.LEFT_ROLLER_MOTOR);
 
@@ -76,7 +81,7 @@ public class Intake extends SubsystemBase{
                 else if(stalled && now - homingStallStart > IntakeConstants.kStallTime){
                     rightIntakeMotor.setControl(intakePositionRequest);
                     rightIntakeMotor.setPosition(IntakeConstants.kHome);
-                    homing = false;
+                    deploy();
                 }
             }
             else{
@@ -140,9 +145,7 @@ public class Intake extends SubsystemBase{
         cachedPivotKP = IntakeConstants.kRightIntakeDeployConfig.Slot0.kP;
         cachedPivotKI = IntakeConstants.kRightIntakeDeployConfig.Slot0.kI;
         cachedPivotKD = IntakeConstants.kRightIntakeDeployConfig.Slot0.kD;
-        SmartDashboard.putNumber("Intake/PID/kP", cachedPivotKP);
-        SmartDashboard.putNumber("Intake/PID/kI", cachedPivotKI);
-        SmartDashboard.putNumber("Intake/PID/kD", cachedPivotKD);
+
         double pivotKP = SmartDashboard.getNumber("Intake/PID/kP", cachedPivotKP);
         double pivotKI = SmartDashboard.getNumber("Intake/PID/kI", cachedPivotKI);
         double pivotKD = SmartDashboard.getNumber("Intake/PID/kD", cachedPivotKD);
@@ -198,6 +201,11 @@ public class Intake extends SubsystemBase{
         );
     }
 
+    public Command getHomeCommand() {
+        return this.runOnce(
+            () -> home()
+        );
+    }
     public Command getOutakeCommand() {
         return this.runEnd(
             () -> outtaking(true),

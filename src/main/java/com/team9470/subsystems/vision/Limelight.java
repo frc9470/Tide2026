@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase{
     boolean doRejectUpdate;
-    public Pose2d pose;
+    public Pose2d pose = new Pose2d();
 
     public Limelight(){
         
@@ -18,28 +18,35 @@ public class Limelight extends SubsystemBase{
     @Override
     public void periodic(){
         doRejectUpdate = false;
-        LimelightHelpers.SetRobotOrientation("limelight", Swerve.getInstance().getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-        SmartDashboard.putNumber("Pose/Translation/x", mt2.pose.getX() );
-        SmartDashboard.putNumber("Pose/Translation/y", mt2.pose.getY() );
-        SmartDashboard.putNumber("Pose/Translation/Angle", mt2.pose.getRotation().getDegrees() );
-        
-        // if(Math.abs(Swerve.getInstance().getPigeon2().getAngularVelocityZDevice().getValueAsDouble()) > 360)
-        // {
-        //     doRejectUpdate = true;
-        // }
-        if(mt2.tagCount == 0)
+    LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+
+        if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
+        {
+            if(mt1.rawFiducials[0].ambiguity > .7)
+            {
+            doRejectUpdate = true;
+            }
+            if(mt1.rawFiducials[0].distToCamera > 3)
+            {
+            doRejectUpdate = true;
+            }
+        }
+        if(mt1.tagCount == 0)
         {
             doRejectUpdate = true;
         }
-         if(!doRejectUpdate)
-         {
-            this.pose = mt2.pose;
-            SmartDashboard.putNumber("Pose/timestamp", mt2.timestampSeconds );
-            Swerve.getInstance().setVisionMeasurementStdDevs(VecBuilder.fill(0.7,0.7,9999999));
+
+        if(!doRejectUpdate)
+        {
+            pose = mt1.pose;
+        SmartDashboard.putNumber("Pose/x", mt1.pose.getX());
+        SmartDashboard.putNumber("Pose/y", mt1.pose.getY());
+        SmartDashboard.putNumber("Pose/Heading", pose.getRotation().getRadians());
+        SmartDashboard.putNumber("Pose/time", mt1.timestampSeconds);
+            Swerve.getInstance().setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
             Swerve.getInstance().addVisionMeasurement(
-                mt2.pose,
-                mt2.timestampSeconds, VecBuilder.fill(0.3,0.3,9999999));
+                mt1.pose,
+                mt1.timestampSeconds);
         }
     }
     public Pose2d getPose2d(){

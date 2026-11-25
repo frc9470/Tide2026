@@ -62,7 +62,7 @@ public class Turret extends SubsystemBase {
     public void periodic() {
         calculateTargetHub();
         //targetAngle = Units.Degrees.of(MathUtil.clamp(targetAngle.in(Degrees), TurretConstants.lowerLimit.in(Degrees), TurretConstants.upperLimit.in(Degrees)));
-        targetAngle = Units.Degrees.of(targetAngle.in(Degrees) % 360 - 225);
+        
         boolean withinTolerance = Math.abs(getAngle().minus(targetAngle).in(Degree)) <= TurretConstants.kTolerance;
         // if(!withinTolerance){
             turretMotor.setControl(motionMagic.withPosition(targetAngle));
@@ -70,7 +70,7 @@ public class Turret extends SubsystemBase {
         // else{
         //     turretMotor.setPosition(targetAngle);
         // }
-SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
+        SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
         SmartDashboard.putNumber("Turret/Angle", getAngle().in(Degrees));        
         SmartDashboard.putNumber("Turret/Error", targetAngle.in(Degrees)-getAngle().in(Degrees));
         
@@ -128,11 +128,17 @@ SmartDashboard.putNumber("Turret/TargetAngle", targetAngle.in(Degrees));
     //     else calculateTargetPass();
     
     // }
-    private void calculateTargetHub() {
-        Pose2d robotPose = poseSlave.getPose2d();
-        Translation2d offset = new Pose2d(new Translation2d(FieldConstants.Hub.topCenterPoint.getX(), FieldConstants.Hub.topCenterPoint.getY()), new Rotation2d()).minus(robotPose).getTranslation();
-        setTargetAngle(Units.Degrees.of(offset.getAngle().getMeasure().in(Degrees)));
-    }
+private void calculateTargetHub() {
+    Pose2d robotPose = poseSlave.getPose2d();
+
+    Translation2d offset = new Translation2d(FieldConstants.Hub.topCenterPoint.getX(),FieldConstants.Hub.topCenterPoint.getY()).minus(robotPose.getTranslation());
+
+    double fieldAngle = offset.getAngle().getDegrees();
+    double turretAngle = MathUtil.inputModulus( fieldAngle - robotPose.getRotation().getDegrees() - 180, -225, 135);
+    SmartDashboard.putNumber("Distance", offset.getNorm());
+    setTargetAngle(Degrees.of(turretAngle));
+}
+    
 
     public static Angle calculateTarget() {
         Pose2d robotPose = Swerve.getInstance().getPose();
